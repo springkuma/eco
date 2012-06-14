@@ -13,18 +13,21 @@ var todo = new Todo({});
 console.log(todo.get('name'));
 
 var YamaView = Backbone.View.extend({
-  tagName: 'div',
-  className: 'yama',
+  el: $(".yama"),
 
   initialize: function(){
     console.log('initialize');
     this.render();
   },
   render: function(){
-    console.log($(this.el));
+    console.log('render');
 
-    $(this.el).html('hogehoge');
+//    $(".yama").html('hogehoge');
+    this.$el.html('hogehoge');
+    return this;
   }
 });
 
-var view = new YamaView();
+var view = new YamaView;
+console.log(view.el);
+console.log($(view.el).html)
