@@ -106,12 +106,11 @@ $(function(){
     // app, we set a direct reference on the model for convenience.
     initialize: function() {
       this.model.bind('change', this.render, this);
-//      this.model.bind('destroy', this.remove, this);
+      this.model.bind('destroy', this.remove, this);
     },
 
     // Re-render the titles of the todo item.
     render: function() {
-console.log("todo render");
       this.$el.html(this.template(this.model.toJSON()));
       this.$el.toggleClass('done', this.model.get('done'));
       this.input = this.$('.edit');
@@ -190,7 +189,6 @@ console.log("todo render");
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
-console.log("render");
       var done = Todos.done().length;
       var remaining = Todos.remaining().length;
 
