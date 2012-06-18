@@ -12,7 +12,7 @@ $(function(){
 
   var TodoList = Backbone.Collection.extend({
     model: Todo,
-    localStorage: new Store("todos-backbone"),
+    localStorage: new Store("todos-backbone")
   });
 
   var Todos = new TodoList;
