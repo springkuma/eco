@@ -1,1 +1,0 @@
-yama@yamane-takeshi-no-iMac.local.244

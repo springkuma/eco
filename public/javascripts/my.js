@@ -12,7 +12,7 @@ $(function(){
 
   var TodoList = Backbone.Collection.extend({
     model: Todo,
-    localStorage: new Store("todos-backbone"),
+    url: "/todos"
   });
 
   var Todos = new TodoList;
@@ -51,12 +51,13 @@ $(function(){
       if (Todos.length){
 
       } else{
-
+        
       }
       $("#yama").html(Todos.length);
     },
 
     addOne: function(todo){
+      console.log(todo.url);
       var view = new TodoView({model: todo});
       this.$("#todo-list").append(view.render().el);
     },
@@ -69,4 +70,5 @@ $(function(){
   });
 
   var App = new AppView;  
-})
+});
+
