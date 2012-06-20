@@ -29,6 +29,7 @@ app.get "/", routes.index
 app.post "/todos", (req, res) ->
   console.log("todos post")
   console.log(req.body)
+  console.log(1)
 
 app.listen 3000, ->
   console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env
