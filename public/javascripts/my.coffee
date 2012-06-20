@@ -2,12 +2,13 @@ $ ->
   Todo = Backbone.Model.extend(
     defaults: ->
       title: "empty todo..."
+    url: "/todos/"
 
     initialize: ->
   )
   TodoList = Backbone.Collection.extend(
     model: Todo
-    localStorage: new Store("todos-backbone")
+    url: "/todos/"
   )
   Todos = new TodoList
   TodoView = Backbone.View.extend(
@@ -48,7 +49,7 @@ $ ->
   )
   App = new AppView
 
-#   Workspace = Backbone.Router.extend(
-#     routes:
-#       "help": ""
-#   )
+  Workspace = Backbone.Router.extend(
+    routes:
+      "help": ""
+  )
