@@ -8,7 +8,7 @@ $ ->
   )
   TodoList = Backbone.Collection.extend(
     model: Todo
-    url: "/todos/"
+#     url: "/todos/"
   )
   Todos = new TodoList
   TodoView = Backbone.View.extend(
@@ -22,6 +22,7 @@ $ ->
   )
   AppView = Backbone.View.extend(
     el: $("#todoapp")
+
     events:
       "keypress #new-todo": "addTodo"
 
