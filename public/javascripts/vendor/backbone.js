@@ -341,6 +341,7 @@
         if (success) success(model, resp);
       };
       options.error = Backbone.wrapError(options.error, model, options);
+console.log('sync');
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 

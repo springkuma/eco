@@ -2,22 +2,27 @@ $ ->
   Todo = Backbone.Model.extend(
     defaults: ->
       title: "empty todo..."
+      done: false
     url: "/todos/"
 
     initialize: ->
   )
   TodoList = Backbone.Collection.extend(
     model: Todo
-#     url: "/todos/"
+    url: "/todos/"
   )
   Todos = new TodoList
   TodoView = Backbone.View.extend(
     tagName: "li"
+    template: _.template($('#item-template').html()),
+    
     initialize: ->
       @render()
 
     render: ->
-      @$el.html "<li>" + @model.get("title") + "</li>"
+      @$el.html @template(@model.toJSON())
+      @$el.toggleClass('done', @model.get('done'))
+      @input = @$('.edit')
       this
   )
   AppView = Backbone.View.extend(
@@ -30,12 +35,14 @@ $ ->
       @input = @$("#new-todo")
       Todos.bind "add", @addOne, this
       Todos.bind "all", @render, this
+
+      @footer = $('footer')
+      @main = $('main')
       @render()
 
     render: ->
-      if Todos.length
-
-      else
+      @main.show;
+      @footer.show;
 
       $("#yama").html Todos.length
 

@@ -16,7 +16,7 @@ app.configure ->
 app.configure "development", ->
   app.use express.errorHandler(
     dumpExceptions: true
-    showStack: true
+    showStack: true 
   )
 
 app.configure "production", ->
@@ -25,11 +25,24 @@ app.configure "production", ->
 Schema = mongoose.Schema
 TodoSchema = new Schema(title: String)
 
+Todo = mongoose.model('Todo', TodoSchema)
+
 app.get "/", routes.index
+
+app.get "/todos", (req, res) ->
+  Todo.find (error, todos) ->
+    if not error
+      res.json todos: todos
+    else
+      res.json success: false
+
 app.post "/todos", (req, res) ->
-  console.log("todos post")
-  console.log(req.body)
-  console.log(1)
+  todo = new Todo(req.body)
+  todo.save (error) ->
+    if not error
+      res.json success: true
+    else
+      res.json success: false
 
 app.listen 3000, ->
   console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env

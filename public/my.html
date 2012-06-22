@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-i">
   <title>backboneサンプル</title>
+  <link rel="stylesheet" href="stylesheets/todos.css"></link>
 </head>
 
 <body>
@@ -17,6 +18,18 @@
       <ul id="todo-list"></ul>
       <div id="yama"></div>
     </section>
+
+  <!-- template -->
+  <script type="text/template" id="item-template">
+    <div class="view">
+      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+      <label><%= title %></label>
+      <a class="destroy"></a>
+    </div>
+    <input class="edit" type="text" value="<%= title %>" />
+  </script>
+
+
 
     <script src="javascripts/vendor/json2.js"></script>
     <script src="javascripts/vendor/jquery-1.7.2.js"></script>
