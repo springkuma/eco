@@ -49,7 +49,6 @@ app.post "/todos", (req, res) ->
 app.put "/todos/:id", (req, res) ->
   data = title: req.body.title, done: req.body.done
   Todo.update {_id: req.params.id}, data, (error, todo) ->
-    console.log(error)
     if not error
       res.json success: true
     else
@@ -57,7 +56,6 @@ app.put "/todos/:id", (req, res) ->
 
 app.delete "/todos/:id", (req, res) ->
   Todo.findById req.params.id, (error, todo) ->
-    console.log(todo)
     if not error
       todo.remove (delete_error) ->
         if not delete_error

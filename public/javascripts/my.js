@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var App, AppView, Todo, TodoList, TodoView, Todos, Workspace;
+    var App, AppView, Todo, TodoList, TodoView, Todos;
     Todo = Backbone.Model.extend({
       idAttribute: "_id",
       defaults: function() {
@@ -109,12 +109,7 @@
         return Todos.each(this.addOne);
       }
     });
-    App = new AppView;
-    return Workspace = Backbone.Router.extend({
-      routes: {
-        "help": ""
-      }
-    });
+    return App = new AppView;
   });
 
 }).call(this);

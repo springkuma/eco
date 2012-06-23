@@ -1,5 +1,5 @@
 $ ->
-  Todo = Backbone.Model.extend(
+  Todo = Backbone.Model.extend
     idAttribute: "_id"
     defaults: ->
       title: "empty todo..."
@@ -11,13 +11,13 @@ $ ->
 
     clear: ->
       @destroy()
-  )
-  TodoList = Backbone.Collection.extend(
+
+  TodoList = Backbone.Collection.extend
     model: Todo
     url: "/todos"
-  )
+  
   Todos = new TodoList
-  TodoView = Backbone.View.extend(
+  TodoView = Backbone.View.extend
     tagName: "li"
     template: _.template($('#item-template').html()),
     events:
@@ -51,8 +51,8 @@ $ ->
 
     clear: ->
       @model.clear()
-  )
-  AppView = Backbone.View.extend(
+
+  AppView = Backbone.View.extend
     el: $("#todoapp")
 
     events:
@@ -86,10 +86,5 @@ $ ->
 
     addAll: ->
       Todos.each(@addOne)
-  )
+  
   App = new AppView
-
-  Workspace = Backbone.Router.extend(
-    routes:
-      "help": ""
-  )

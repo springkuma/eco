@@ -80,7 +80,6 @@
     return Todo.update({
       _id: req.params.id
     }, data, function(error, todo) {
-      console.log(error);
       if (!error) {
         return res.json({
           success: true
@@ -95,7 +94,6 @@
 
   app["delete"]("/todos/:id", function(req, res) {
     return Todo.findById(req.params.id, function(error, todo) {
-      console.log(todo);
       if (!error) {
         return todo.remove(function(delete_error) {
           if (!delete_error) {
