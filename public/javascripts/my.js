@@ -4,31 +4,70 @@
   $(function() {
     var App, AppView, Todo, TodoList, TodoView, Todos, Workspace;
     Todo = Backbone.Model.extend({
+      idAttribute: "_id",
       defaults: function() {
         return {
           title: "empty todo...",
           done: false
         };
       },
-      url: "/todos/",
-      initialize: function() {}
+      initialize: function() {
+        if (!this.get("title")) {
+          return this.set({
+            "title": this.defaults().title
+          });
+        }
+      },
+      clear: function() {
+        return this.destroy();
+      }
     });
     TodoList = Backbone.Collection.extend({
       model: Todo,
-      url: "/todos/"
+      url: "/todos"
     });
     Todos = new TodoList;
     TodoView = Backbone.View.extend({
       tagName: "li",
       template: _.template($('#item-template').html()),
+      events: {
+        "click a.destroy": "clear",
+        "dblclick .view": "edit",
+        "keypress .edit": "updateOnEnter",
+        "blur .edit": "close"
+      },
       initialize: function() {
-        return this.render();
+        this.model.bind('change', this.render, this);
+        return this.model.bind('destroy', this.remove, this);
       },
       render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         this.$el.toggleClass('done', this.model.get('done'));
         this.input = this.$('.edit');
         return this;
+      },
+      edit: function() {
+        this.$el.addClass("editing");
+        return this.input.focus();
+      },
+      updateOnEnter: function(e) {
+        if (e.keyCode === 13) {
+          return this.close();
+        }
+      },
+      close: function() {
+        var value;
+        value = this.input.val();
+        if (!value) {
+          this.clear();
+        }
+        this.model.save({
+          title: value
+        });
+        return this.$el.removeClass("editing");
+      },
+      clear: function() {
+        return this.model.clear();
       }
     });
     AppView = Backbone.View.extend({
@@ -39,14 +78,15 @@
       initialize: function() {
         this.input = this.$("#new-todo");
         Todos.bind("add", this.addOne, this);
+        Todos.bind('reset', this.addAll, this);
         Todos.bind("all", this.render, this);
         this.footer = $('footer');
-        this.main = $('main');
-        return this.render();
+        this.main = $('#main');
+        return Todos.fetch();
       },
       render: function() {
-        this.main.show;
-        this.footer.show;
+        this.main.show();
+        this.footer.show();
         return $("#yama").html(Todos.length);
       },
       addOne: function(todo) {
@@ -64,6 +104,9 @@
           title: this.input.val()
         });
         return this.input.val("");
+      },
+      addAll: function() {
+        return Todos.each(this.addOne);
       }
     });
     App = new AppView;

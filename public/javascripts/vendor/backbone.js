@@ -88,7 +88,6 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-
       var calls, event, node, tail, list;
       if (!callback) return this;
       events = events.split(eventSplitter);
@@ -341,7 +340,6 @@
         if (success) success(model, resp);
       };
       options.error = Backbone.wrapError(options.error, model, options);
-console.log('sync');
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -599,6 +597,7 @@ console.log('sync');
         cid = model.cid;
         id = model.id;
         if (cids[cid] || this._byCid[cid] || ((id != null) && (ids[id] || this._byId[id]))) {
+
           dups.push(i);
           continue;
         }
