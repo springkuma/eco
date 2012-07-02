@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var App, AppView, Todo, TodoList, TodoView, Todos;
+    var App, AppView, Expense, ExpenseList, ExpenseView, Expenses, Todo;
     Todo = Backbone.Model.extend({
       idAttribute: "_id",
       defaults: function() {
@@ -22,12 +22,23 @@
         return this.destroy();
       }
     });
-    TodoList = Backbone.Collection.extend({
-      model: Todo,
-      url: "/todos"
+    Expense = Backbone.Model.extend({
+      idAttribute: "_id",
+      defaults: function() {
+        return {
+          date: new Date(),
+          remark: "",
+          price: 0
+        };
+      },
+      initialize: function() {}
     });
-    Todos = new TodoList;
-    TodoView = Backbone.View.extend({
+    ExpenseList = Backbone.Collection.extend({
+      model: Expense,
+      url: "/expenses"
+    });
+    Expenses = new ExpenseList;
+    ExpenseView = Backbone.View.extend({
       tagName: "li",
       template: _.template($('#item-template').html()),
       events: {
@@ -42,7 +53,6 @@
       },
       render: function() {
         this.$el.html(this.template(this.model.toJSON()));
-        this.$el.toggleClass('done', this.model.get('done'));
         this.input = this.$('.edit');
         return this;
       },
@@ -71,30 +81,39 @@
       }
     });
     AppView = Backbone.View.extend({
-      el: $("#todoapp"),
+      el: $("#expenseapp"),
       events: {
-        "keypress #new-todo": "addTodo"
+        "keypress #remark": "addExpense",
+        "keypress #price": "addExpense"
       },
       initialize: function() {
+        var before_yesterday, today, yesterday;
         this.input = this.$("#new-todo");
-        Todos.bind("add", this.addOne, this);
-        Todos.bind('reset', this.addAll, this);
-        Todos.bind("all", this.render, this);
+        this.display_date = this.$("#selectdate");
+        this.remark = this.$("#remark");
+        this.price = this.$("#price");
+        Expenses.bind("add", this.addOne, this);
+        Expenses.bind('reset', this.addAll, this);
+        Expenses.bind("all", this.render, this);
         this.footer = $('footer');
         this.main = $('#main');
-        return Todos.fetch();
+        today = new Date();
+        yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+        before_yesterday = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+        $("#selectdate").append($('<option>').text(this.getDateToString(today)), $('<option>').text(this.getDateToString(yesterday)), $('<option>').text(this.getDateToString(before_yesterday)));
+        return Expenses.fetch();
       },
       render: function() {
         this.main.show();
         this.footer.show();
-        return $("#yama").html(Todos.length);
+        return $("#yama").html(Expenses.length);
       },
-      addOne: function(todo) {
+      addOne: function(expense) {
         var view;
-        view = new TodoView({
-          model: todo
+        view = new ExpenseView({
+          model: expense
         });
-        return this.$("#todo-list").append(view.render().el);
+        return this.$("#expense-list").append(view.render().el);
       },
       addTodo: function(e) {
         if (e.keyCode !== 13) {
@@ -105,11 +124,40 @@
         });
         return this.input.val("");
       },
+      addExpense: function(e) {
+        if (e.keyCode !== 13) {
+          return;
+        }
+        console.log(this.display_date.val());
+        Expenses.create({
+          date: this.getStringToDate(this.display_date.val()),
+          remark: this.remark.val(),
+          price: this.price.val()
+        });
+        this.remark.val("");
+        return this.price.val("");
+      },
       addAll: function() {
-        return Todos.each(this.addOne);
+        return Expenses.each(this.addOne);
+      },
+      getDateToString: function(date) {
+        return "" + (date.getMonth() + 1) + "/" + date.getDate();
+      },
+      getStringToDate: function(str) {
+        var ary, date, month_date, _i, _len;
+        ary = str.split("/");
+        month_date = new Array();
+        for (_i = 0, _len = ary.length; _i < _len; _i++) {
+          date = ary[_i];
+          month_date.push(parseInt(date));
+        }
+        date = new Date();
+        date.setMonth(month_date[0] - 1);
+        date.setDate(month_date[1]);
+        return date;
       }
     });
-    return App = new AppView;
+    return App = new AppView();
   });
 
 }).call(this);

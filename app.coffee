@@ -23,27 +23,33 @@ app.configure "production", ->
   app.use express.errorHandler()
 
 Schema = mongoose.Schema
-TodoSchema = new Schema
-  title: String
-  done: Boolean
+ExpenseSchema = new Schema
+  date: Date
+  remark: String
+  price: Number
 
-Todo = mongoose.model('Todo', TodoSchema)
+Expense = mongoose.model('Expense', ExpenseSchema)
 
 app.get "/", routes.index
 
-app.get "/todos", (req, res) ->
-  Todo.find (error, todos) ->
+app.get "/expenses", (req, res) ->
+  Expense.find (error, expenses) ->
     if not error
-      res.json todos
+      res.json expenses
     else
       res.json success: false
 
-app.post "/todos", (req, res) ->
-  todo = new Todo(req.body)
-  todo.save (error) ->
+app.post "/expenses", (req, res) ->
+  console.log req.body
+  expense = new Expense(req.body)
+  console.log expense
+  expense.save (error) ->
+    console.log error
     if not error
+      console.log("success")
       res.json success: true
     else
+      console.log("error")
       res.json success: false
 
 app.put "/todos/:id", (req, res) ->

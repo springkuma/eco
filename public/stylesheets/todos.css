@@ -9,12 +9,12 @@ body {
 	line-height: 1.4em;
 	background: #eeeeee;
 	color: #333333;
-	width: 520px;
+	width: 600px;
 	margin: 0 auto;
 	-webkit-font-smoothing: antialiased;
 }
 
-#todoapp {
+#expenseapp {
 	background: #fff;
 	padding: 20px;
 	margin-bottom: 40px;
@@ -30,14 +30,14 @@ body {
 	border-radius: 0 0 5px 5px;
 }
 
-#todoapp h1 {
+#expenseapp h1 {
 	font-size: 36px;
 	font-weight: bold;
 	text-align: center;
 	padding: 0 0 10px 0;
 }
 
-#todoapp input[type="text"] {
+input {
 	width: 466px;
 	font-size: 24px;
 	font-family: inherit;
@@ -51,39 +51,73 @@ body {
 	-ms-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
 	-o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
 	box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+        -moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+        border-radius: 10px;	
 }
 
-#todoapp input::-webkit-input-placeholder {
+select {
+  height: 45px;
+  font-size: 24px;
+  font-family: inherit;
+  line-height: 1.4em;
+  border: 0;
+  outline: none;
+  padding: 6px;
+  border: 1px solid #999999;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -ms-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;	
+}
+
+#selectdate {
+  width: 150px;
+}
+
+#expenseapp input::-webkit-input-placeholder {
 	font-style: italic;
+}
+
+#remark {
+  width: 150px;
+}
+
+#price {
+  width: 120px;
 }
 
 #main {
 	display: none;
 }
 
-#todo-list {
+#expense-list {
 	margin: 10px 0;
 	padding: 0;
 	list-style: none;
 }
 
-#todo-list li {
+#expense-list li {
 	padding: 18px 20px 18px 0;
 	position: relative;
 	font-size: 24px;
 	border-bottom: 1px solid #cccccc;
 }
 
-#todo-list li:last-child {
+#expense-list li:last-child {
 	border-bottom: none;
 }
 
-#todo-list li.done label {
+#expense-list li.done label {
 	color: #777777;
 	text-decoration: line-through;
 }
 
-#todo-list .destroy {
+#expense-list .destroy {
 	position: absolute;
 	right: 5px;
 	top: 20px;
@@ -94,44 +128,44 @@ body {
 	background: url(destroy.png) no-repeat;
 }
 
-#todo-list li:hover .destroy {
+#expense-list li:hover .destroy {
   	display: block;
 }
 
-#todo-list .destroy:hover {
+#expense-list .destroy:hover {
   	background-position: 0 -20px;
 }
 
-#todo-list li.editing {
+#expense-list li.editing {
 	border-bottom: none;
 	margin-top: -1px;
 	padding: 0;
 }
 
-#todo-list li.editing:last-child {
+#expense-list li.editing:last-child {
 	margin-bottom: -1px;
 }
 
-#todo-list li.editing .edit {
+#expense-list li.editing .edit {
 	display: block;
 	width: 444px;
 	padding: 13px 15px 14px 20px;
 	margin: 0;
 }
 
-#todo-list li.editing .view {
+#expense-list li.editing .view {
 	display: none;
 }
 
-#todo-list li .view label {
+#expense-list li .view label {
 	word-break: break-word;
 }
 
-#todo-list li .edit {
+#expense-list li .edit {
 	display: none;
 }
 
-#todoapp footer {
+#expenseapp footer {
 	display: none;
 	margin: 0 -20px -20px -20px;
 	overflow: hidden;
@@ -184,7 +218,7 @@ body {
 	top: 1px;
 }
 
-#todo-count span {
+#expense-count span {
 	font-weight: bold;
 }
 

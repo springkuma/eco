@@ -5,40 +5,42 @@
   <meta charset="utf-i">
   <title>backboneサンプル</title>
   <link rel="stylesheet" href="stylesheets/todos.css"></link>
+  <script src="javascripts/vendor/json2.js"></script>
+  <script src="javascripts/vendor/jquery-1.7.2.js"></script>
+  <script src="javascripts/vendor/underscore.js"></script>
+  <script src="javascripts/vendor/backbone.js"></script>
+  <!--script src="javascripts/backbone-localstorage.js"></script-->
+  <script src="javascripts/my.js"></script>
 </head>
 
 <body>
-  <div id="todoapp">
+  <div id="expenseapp">
     <header>
-      <h1>backboneサンプル</h1>
-      <input id="new-todo" type="text" placeholder="please input me!">
+      <h1></h1>
+      <select id="selectdate">
+      </select>
+      <input id="remark" type="text">
+      <input id="price" type="text">
+      <!--input id="new-todo" type="text" placeholder="please input me!"-->
     </header>
 
     <section id="main">
-      <ul id="todo-list"></ul>
+      <ul id="expense-list"></ul>
       <div id="yama"></div>
     </section>
 
   <!-- template -->
   <script type="text/template" id="item-template">
     <div class="view">
-      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
-      <label><%= title %></label>
+      <label><%= date %></label>
+      <label><%= remark %></label>
+      <label><%= price %></label>
       <a class="destroy"></a>
     </div>
-    <input class="edit" type="text" value="<%= title %>" />
+    <input class="edit" type="text" value="<%= remark %>" />
   </script>
 
-
-
-    <script src="javascripts/vendor/json2.js"></script>
-    <script src="javascripts/vendor/jquery-1.7.2.js"></script>
-    <script src="javascripts/vendor/underscore.js"></script>
-    <script src="javascripts/vendor/backbone.js"></script>
-    <!--script src="javascripts/backbone-localstorage.js"></script-->
-    <script src="javascripts/my.js"></script>
   </div>
-aaa
 </body>
 
 </html>

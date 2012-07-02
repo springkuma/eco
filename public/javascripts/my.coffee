@@ -11,13 +11,23 @@ $ ->
 
     clear: ->
       @destroy()
+  Expense = Backbone.Model.extend
+    idAttribute: "_id"
+    defaults: ->
+      date: new Date()
+      remark: ""
+      price: 0
 
-  TodoList = Backbone.Collection.extend
-    model: Todo
-    url: "/todos"
+    initialize: ->
+      
+
+  ExpenseList = Backbone.Collection.extend
+    model: Expense
+    url: "/expenses"
+
+  Expenses = new ExpenseList
   
-  Todos = new TodoList
-  TodoView = Backbone.View.extend
+  ExpenseView = Backbone.View.extend
     tagName: "li"
     template: _.template($('#item-template').html()),
     events:
@@ -32,7 +42,7 @@ $ ->
 
     render: ->
       @$el.html @template(@model.toJSON())
-      @$el.toggleClass('done', @model.get('done'))
+#       @$el.toggleClass('done', @model.get('done'))
       @input = @$('.edit')
       this
 
@@ -53,38 +63,74 @@ $ ->
       @model.clear()
 
   AppView = Backbone.View.extend
-    el: $("#todoapp")
+    el: $("#expenseapp")
 
     events:
-      "keypress #new-todo": "addTodo"
+      "keypress #remark"  : "addExpense"
+      "keypress #price"   : "addExpense"
 
     initialize: ->
       @input = @$("#new-todo")
+      @display_date = @$("#selectdate")
+      @remark = @$("#remark")
+      @price = @$("#price")
       
-      Todos.bind "add", @addOne, this
-      Todos.bind 'reset', @addAll, this
-      Todos.bind "all", @render, this
+      Expenses.bind "add", @addOne, this
+      Expenses.bind 'reset', @addAll, this
+      Expenses.bind "all", @render, this
 
       @footer = $('footer')
       @main = $('#main')
-      Todos.fetch()
+  
+      today = new Date()
+      yesterday = new Date(today.getTime() - 24*60*60*1000)
+      before_yesterday = new Date(today.getTime() - 2*24*60*60*1000)
+
+      $("#selectdate").append($('<option>').text(@getDateToString(today))
+      , $('<option>').text(@getDateToString(yesterday))
+      , $('<option>').text(@getDateToString(before_yesterday)))
+
+      Expenses.fetch()
 
     render: ->
       @main.show()
       @footer.show()
 
-      $("#yama").html Todos.length
+      $("#yama").html Expenses.length
 
-    addOne: (todo) ->
-      view = new TodoView(model: todo)
-      @$("#todo-list").append view.render().el
+    addOne: (expense) ->
+      view = new ExpenseView(model: expense)
+      @$("#expense-list").append view.render().el
 
     addTodo: (e) ->
       return  unless e.keyCode is 13
       Todos.create title: @input.val()
       @input.val ""
 
+    addExpense: (e) ->
+      return unless e.keyCode is 13
+      console.log @display_date.val()
+      Expenses.create
+        date: @getStringToDate(@display_date.val())
+        remark: @remark.val()
+        price: @price.val()
+      @remark.val ""
+      @price.val ""
+
     addAll: ->
-      Todos.each(@addOne)
+      Expenses.each(@addOne)
+
+    getDateToString: (date) ->
+      "" + (date.getMonth()+1) + "/" + date.getDate()
+
+    getStringToDate: (str) ->
+      ary = str.split("/")
+      month_date = new Array()
+      for date in ary
+        month_date.push(parseInt(date))
+      date = new Date()
+      date.setMonth(month_date[0]-1)
+      date.setDate(month_date[1])
+      date
   
-  App = new AppView
+  App = new AppView()
