@@ -58,18 +58,14 @@
 
   app.post("/expenses", function(req, res) {
     var expense;
-    console.log(req.body);
     expense = new Expense(req.body);
-    console.log(expense);
     return expense.save(function(error) {
       console.log(error);
       if (!error) {
-        console.log("success");
         return res.json({
           success: true
         });
       } else {
-        console.log("error");
         return res.json({
           success: false
         });

@@ -31,12 +31,21 @@
           price: 0
         };
       },
-      initialize: function() {},
-      display_date: function() {
-        return this.getDateToString(this.date);
+      initialize: function() {
+        if (!this.get("date")) {
+          return this.set({
+            "date": this.defaults().date
+          });
+        }
       },
-      getDateToString: function(date) {
-        return "" + (date.getMonth() + 1) + "/" + date.getDate();
+      display_date: function() {
+        return this.getDateToString(this.get("date"));
+      },
+      getDateToString: function(target) {
+        if ((typeof target) === "string") {
+          target = new Date(target);
+        }
+        return "" + (target.getMonth() + 1) + "/" + target.getDate();
       }
     });
     ExpenseList = Backbone.Collection.extend({
@@ -58,7 +67,9 @@
         return this.model.bind('destroy', this.remove, this);
       },
       render: function() {
-        this.$el.html(this.template(this.model.toJSON()));
+        this.$el.html(this.template(_.extend(this.model.toJSON(), {
+          "display_date": this.model.display_date()
+        })));
         this.input = this.$('.edit');
         return this;
       },
@@ -134,7 +145,6 @@
         if (e.keyCode !== 13) {
           return;
         }
-        console.log(this.display_date.val());
         Expenses.create({
           date: this.getStringToDate(this.display_date.val()),
           remark: this.remark.val(),

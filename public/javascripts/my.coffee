@@ -20,13 +20,15 @@ $ ->
       price: 0
 
     initialize: ->
+      if not @get("date")
+        @set("date": @defaults().date)
 
     display_date: ->
-      @getDateToString(@date)
+      @getDateToString @get("date")
       
-    getDateToString: (date) ->
-      "" + (date.getMonth()+1) + "/" + date.getDate()
-
+    getDateToString: (target) ->
+      if target === String then target = new Date(target)
+      "" + (target.getMonth()+1) + "/" + target.getDate()
 
   ExpenseList = Backbone.Collection.extend
     model: Expense
@@ -48,7 +50,7 @@ $ ->
       @model.bind 'destroy', @remove, this
 
     render: ->
-      @$el.html @template(@model.toJSON())
+      @$el.html @template(_.extend(@model.toJSON(), "display_date": @model.display_date()))
 #       @$el.toggleClass('done', @model.get('done'))
       @input = @$('.edit')
       this
@@ -116,7 +118,6 @@ $ ->
 
     addExpense: (e) ->
       return unless e.keyCode is 13
-      console.log @display_date.val()
       Expenses.create
         date: @getStringToDate(@display_date.val())
         remark: @remark.val()

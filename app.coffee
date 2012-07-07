@@ -40,16 +40,12 @@ app.get "/expenses", (req, res) ->
       res.json success: false
 
 app.post "/expenses", (req, res) ->
-  console.log req.body
   expense = new Expense(req.body)
-  console.log expense
   expense.save (error) ->
     console.log error
     if not error
-      console.log("success")
       res.json success: true
     else
-      console.log("error")
       res.json success: false
 
 app.put "/todos/:id", (req, res) ->
