@@ -9,6 +9,7 @@ $ ->
       if not @get("title")
         @set({"title": @defaults().title})
 
+
     clear: ->
       @destroy()
       
@@ -22,12 +23,15 @@ $ ->
     initialize: ->
       if not @get("date")
         @set("date": @defaults().date)
+      if @get("date") isnt Date
+        @set("date": new Date(@get("date")))
 
     display_date: ->
       @getDateToString @get("date")
       
     getDateToString: (target) ->
-      if target === String then target = new Date(target)
+      console.log(target)
+      if target is String  then target = new Date(target)
       "" + (target.getMonth()+1) + "/" + target.getDate()
 
   ExpenseList = Backbone.Collection.extend

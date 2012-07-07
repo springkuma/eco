@@ -33,6 +33,11 @@ Expense = mongoose.model('Expense', ExpenseSchema)
 app.get "/", routes.index
 
 app.get "/expenses", (req, res) ->
+  query = Expense.find({})
+  query.sort("date", 1)
+  query.exec (err, docs) ->
+    console.log(docs)
+  
   Expense.find (error, expenses) ->
     if not error
       res.json expenses
@@ -42,7 +47,6 @@ app.get "/expenses", (req, res) ->
 app.post "/expenses", (req, res) ->
   expense = new Expense(req.body)
   expense.save (error) ->
-    console.log error
     if not error
       res.json success: true
     else

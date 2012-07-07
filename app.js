@@ -45,6 +45,12 @@
   app.get("/", routes.index);
 
   app.get("/expenses", function(req, res) {
+    var query;
+    query = Expense.find({});
+    query.sort("date", 1);
+    query.exec(function(err, docs) {
+      return console.log(docs);
+    });
     return Expense.find(function(error, expenses) {
       if (!error) {
         return res.json(expenses);
@@ -60,7 +66,6 @@
     var expense;
     expense = new Expense(req.body);
     return expense.save(function(error) {
-      console.log(error);
       if (!error) {
         return res.json({
           success: true

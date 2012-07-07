@@ -33,8 +33,13 @@
       },
       initialize: function() {
         if (!this.get("date")) {
-          return this.set({
+          this.set({
             "date": this.defaults().date
+          });
+        }
+        if (this.get("date") !== Date) {
+          return this.set({
+            "date": new Date(this.get("date"))
           });
         }
       },
@@ -42,7 +47,8 @@
         return this.getDateToString(this.get("date"));
       },
       getDateToString: function(target) {
-        if ((typeof target) === "string") {
+        console.log(target);
+        if (target === String) {
           target = new Date(target);
         }
         return "" + (target.getMonth() + 1) + "/" + target.getDate();
