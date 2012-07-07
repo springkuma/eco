@@ -21,6 +21,7 @@ $ ->
       price: 0
 
     initialize: ->
+      # ちょっと考える
       if not @get("date")
         @set("date": @defaults().date)
       if @get("date") isnt Date

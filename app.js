@@ -48,10 +48,7 @@
     var query;
     query = Expense.find({});
     query.sort("date", 1);
-    query.exec(function(err, docs) {
-      return console.log(docs);
-    });
-    return Expense.find(function(error, expenses) {
+    return query.exec(function(error, expenses) {
       if (!error) {
         return res.json(expenses);
       } else {

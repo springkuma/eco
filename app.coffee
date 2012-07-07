@@ -35,10 +35,7 @@ app.get "/", routes.index
 app.get "/expenses", (req, res) ->
   query = Expense.find({})
   query.sort("date", 1)
-  query.exec (err, docs) ->
-    console.log(docs)
-  
-  Expense.find (error, expenses) ->
+  query.exec (error, expenses) ->
     if not error
       res.json expenses
     else
