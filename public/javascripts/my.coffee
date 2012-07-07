@@ -11,6 +11,7 @@ $ ->
 
     clear: ->
       @destroy()
+      
   Expense = Backbone.Model.extend
     idAttribute: "_id"
     defaults: ->
@@ -19,7 +20,13 @@ $ ->
       price: 0
 
     initialize: ->
+
+    display_date: ->
+      @getDateToString(@date)
       
+    getDateToString: (date) ->
+      "" + (date.getMonth()+1) + "/" + date.getDate()
+
 
   ExpenseList = Backbone.Collection.extend
     model: Expense

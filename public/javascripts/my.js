@@ -31,7 +31,13 @@
           price: 0
         };
       },
-      initialize: function() {}
+      initialize: function() {},
+      display_date: function() {
+        return this.getDateToString(this.date);
+      },
+      getDateToString: function(date) {
+        return "" + (date.getMonth() + 1) + "/" + date.getDate();
+      }
     });
     ExpenseList = Backbone.Collection.extend({
       model: Expense,
