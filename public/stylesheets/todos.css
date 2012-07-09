@@ -43,7 +43,7 @@ input {
 	line-height: 1.4em;
 	border: 0;
 	outline: none;
-	padding: 2px;
+	padding: 0px;
 	border: 1px solid #999999;
 	-webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
 	-moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
@@ -83,17 +83,23 @@ select {
 }
 
 #target_date {
-  float: left;
+  margin: 0px;
+  border: 1px solid;
   width: 4em;
+  display: inline-block;
+  height: 2em;
 }
 
 #remark {
-  float: left;
-  width: 5em;
+  width: 10em;
+  height: 2em;
+  display: inline-block;
 }
 
 #price {
-  width: 120px;
+  width: 15em;
+  height: 2em;
+  display: inline-block;
 }
 
 #main {
