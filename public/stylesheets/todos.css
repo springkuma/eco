@@ -5,7 +5,7 @@ body {
 }
 
 body {
-	font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 24px "Helvetica Neue", Helvetica, Arial, sans-serif;
 	line-height: 1.4em;
 	background: #eeeeee;
 	color: #333333;
@@ -82,23 +82,28 @@ select {
 	font-style: italic;
 }
 
-#target_date {
+ul{
   margin: 0px;
-  border: 1px solid;
-  width: 4em;
+  padding: 0px;
+}
+
+ul li{
+  list-style: none;
+}
+
+#new_target{
+  padding: 0px;
+}
+
+#target_date {
   display: inline-block;
-  height: 2em;
 }
 
 #remark {
-  width: 10em;
-  height: 2em;
   display: inline-block;
 }
 
 #price {
-  width: 15em;
-  height: 2em;
   display: inline-block;
 }
 
