@@ -9,7 +9,7 @@ body {
 	line-height: 1.4em;
 	background: #eeeeee;
 	color: #333333;
-	width: 600px;
+	width: 800px;
 	margin: 0 auto;
 	-webkit-font-smoothing: antialiased;
 }
@@ -91,20 +91,48 @@ ul li{
   list-style: none;
 }
 
-#new_target{
+.new_expense{
   padding: 0px;
 }
 
-#target_date {
+.new_date {
+  display: inline-block;
+  margin-right: 2em;
+}
+
+.new_remark {
   display: inline-block;
 }
 
-#remark {
+.new_remark_field{
+  width: 150px;
+}
+
+.new_price {
   display: inline-block;
 }
 
-#price {
+.new_price_field{
+  width: 250px;
+}
+
+.expense_item{
+  padding-left: 4.5em;
+}
+
+.remark{
   display: inline-block;
+  width: 150px;
+}
+
+.price{
+  display: inline-block;
+  width: 250px;
+}
+
+.total{
+  display: inline-block;
+  width: 100px;
 }
 
 #main {

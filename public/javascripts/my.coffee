@@ -96,25 +96,18 @@ $ ->
       @footer = $('footer')
       @main = $('#main')
   
-      today = new Date()
-      yesterday = new Date(today.getTime() - 24*60*60*1000)
-      before_yesterday = new Date(today.getTime() - 2*24*60*60*1000)
-
-      $("#selectdate").append($('<option>').text(@getDateToString(today))
-      , $('<option>').text(@getDateToString(yesterday))
-      , $('<option>').text(@getDateToString(before_yesterday)))
-
       Expenses.fetch()
 
     render: ->
       @main.show()
       @footer.show()
 
+      console.log(Expenses)
       $("#yama").html Expenses.length
 
     addOne: (expense) ->
       view = new ExpenseView(model: expense)
-      @$("#expense-list").append view.render().el
+      @$("#expense_list").append view.render().el
 
     addTodo: (e) ->
       return  unless e.keyCode is 13

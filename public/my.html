@@ -16,47 +16,39 @@
 <body>
   <div id="expenseapp">
     <header>
-      <h1></h1>
-      <select id="selectdate">
-      </select>
-      <input id="remark" type="text">
-      <input id="price" type="text">
-      <!--input id="new-todo" type="text" placeholder="please input me!"-->
+      <h1>eco</h1>
     </header>
 
     <section id="main">
       <ul>
-        <li>
-          <div id="target_date">7/11</div>
-          <div id="remark"><input type="text"/></div>
-          <div id="price"><input type="text"/></div>
+        <li class="new_expense">
+          <div class="new_date">7/11</div>
+          <div class="new_remark"><input type="text" class="new_remark_field"/></div>
+          <div class="new_price"><input type="text" class="new_price_field"/></div>
         </li>
         <ul>
-          <li>
-            <div style="width: 100px; float: left;">食費</div>
-            <div>1,000円</div>
-          </li>
-          <li>
-            <div style="width: 100px; float: left;">酒</div>
-            <div>1,100円</div>
-          </li>
+        <li class="expense_item">
+          <div class="remark">食費</div>
+          <div class="price">1,000円</div>
+        </li>
+        <li class="expense_item">
+          <div class="remark">酒</div>
+          <div class="price">1,100円</div>
+          <div class="total">2,100円</div>
+        </li>
         </ul>
-        <li>7/2</li>
+        <ul id="expense_list"></ul>
       </ul>
-
-      <ul id="expense-list"></ul>
-      <div id="yama"></div>
     </section>
 
   <!-- template -->
   <script type="text/template" id="item-template">
-    <div class="view">
-      <label><%= display_date %></label>
-      <label><%= remark %></label>
-      <label><%= price %></label>
+    <li class="expense_item">
+      <div class="remark"><%= remark %></div>
+      <div class="price"><%= price %>円</div>
       <a class="destroy"></a>
-    </div>
-    <input class="edit" type="text" value="<%= remark %>" />
+    </li>
+    <!--input class="edit" type="text" value="<%= remark %>" /-->
   </script>
 
   </div>

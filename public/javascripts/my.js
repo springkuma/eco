@@ -110,7 +110,6 @@
         "keypress #price": "addExpense"
       },
       initialize: function() {
-        var before_yesterday, today, yesterday;
         this.input = this.$("#new-todo");
         this.display_date = this.$("#selectdate");
         this.remark = this.$("#remark");
@@ -120,15 +119,12 @@
         Expenses.bind("all", this.render, this);
         this.footer = $('footer');
         this.main = $('#main');
-        today = new Date();
-        yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-        before_yesterday = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
-        $("#selectdate").append($('<option>').text(this.getDateToString(today)), $('<option>').text(this.getDateToString(yesterday)), $('<option>').text(this.getDateToString(before_yesterday)));
         return Expenses.fetch();
       },
       render: function() {
         this.main.show();
         this.footer.show();
+        console.log(Expenses);
         return $("#yama").html(Expenses.length);
       },
       addOne: function(expense) {
@@ -136,7 +132,7 @@
         view = new ExpenseView({
           model: expense
         });
-        return this.$("#expense-list").append(view.render().el);
+        return this.$("#expense_list").append(view.render().el);
       },
       addTodo: function(e) {
         if (e.keyCode !== 13) {
