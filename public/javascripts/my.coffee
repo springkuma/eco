@@ -31,7 +31,6 @@ $ ->
       @getDateToString @get("date")
       
     getDateToString: (target) ->
-      console.log(target)
       if target is String  then target = new Date(target)
       "" + (target.getMonth()+1) + "/" + target.getDate()
 
@@ -43,6 +42,8 @@ $ ->
   
   ExpenseView = Backbone.View.extend
     tagName: "li"
+    className: "expense_item"
+  
     template: _.template($('#item-template').html()),
     events:
       "click a.destroy": "clear"
@@ -76,6 +77,38 @@ $ ->
     clear: ->
       @model.clear()
 
+  DateView = Backbone.View.extend
+    tagName: 'li'
+    template: _.template($('#date-template').html())
+
+    events:
+      "keypress" : "addExpense"
+  
+    initialize: (year, month, date) ->
+      @date = new Date(year, month, date)
+      @id = "new-" + (@date.getMonth()+1) + "-" + @date.getDate()
+
+    render: ->
+      @$el.attr(id: @id)
+      @$el.html @template(@date)
+      @remark = @$el.find(".new-remark-field")
+      @price = @$el.find(".new-price-field")
+      this
+
+    addOne: (expense) ->
+      view = new ExpenseView(model: expense)
+      @$("#expense-list").append view.render().el
+
+    addExpense: (e) ->
+      return unless e.keyCode is 13
+      console.log(@remark.val(), @price.val())
+      Expenses.create
+        date: @date
+        remark: @remark.val()
+        price: @price.val()
+      @remark.val ""
+      @price.val ""
+
   AppView = Backbone.View.extend
     el: $("#expenseapp")
 
@@ -88,6 +121,7 @@ $ ->
       @display_date = @$("#selectdate")
       @remark = @$("#remark")
       @price = @$("#price")
+      @dates = new Array()
       
       Expenses.bind "add", @addOne, this
       Expenses.bind 'reset', @addAll, this
@@ -95,19 +129,27 @@ $ ->
 
       @footer = $('footer')
       @main = $('#main')
-  
-      Expenses.fetch()
 
+      today = new Date()
+
+      i = 1
+      while i <= today.getDate()
+        view = new DateView(today.getYear(), today.getMonth(), i)
+        @dates.push(view)
+        @$("#date-list").append view.render().el
+        i++
+
+      Expenses.fetch()
+ 
     render: ->
       @main.show()
       @footer.show()
 
-      console.log(Expenses)
       $("#yama").html Expenses.length
+      this
 
     addOne: (expense) ->
-      view = new ExpenseView(model: expense)
-      @$("#expense_list").append view.render().el
+      @dates[expense.get("date").getDate()-1].addOne(expense)
 
     addTodo: (e) ->
       return  unless e.keyCode is 13
@@ -124,7 +166,7 @@ $ ->
       @price.val ""
 
     addAll: ->
-      Expenses.each(@addOne)
+      Expenses.each(@addOne, this)
 
     getDateToString: (date) ->
       "" + (date.getMonth()+1) + "/" + date.getDate()
@@ -138,5 +180,5 @@ $ ->
       date.setMonth(month_date[0]-1)
       date.setDate(month_date[1])
       date
-  
+
   App = new AppView()

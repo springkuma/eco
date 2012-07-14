@@ -91,28 +91,28 @@ ul li{
   list-style: none;
 }
 
-.new_expense{
+.new-expense{
   padding: 0px;
 }
 
-.new_date {
+.new-date {
   display: inline-block;
   margin-right: 2em;
 }
 
-.new_remark {
+.new-remark {
   display: inline-block;
 }
 
-.new_remark_field{
+.new-remark-field{
   width: 150px;
 }
 
-.new_price {
+.new-price {
   display: inline-block;
 }
 
-.new_price_field{
+.new-price-field{
   width: 250px;
 }
 

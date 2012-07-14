@@ -20,34 +20,39 @@
     </header>
 
     <section id="main">
-      <ul>
+      <ul class="date-list">
         <li class="new_expense">
           <div class="new_date">7/11</div>
           <div class="new_remark"><input type="text" class="new_remark_field"/></div>
           <div class="new_price"><input type="text" class="new_price_field"/></div>
         </li>
         <ul>
-        <li class="expense_item">
-          <div class="remark">食費</div>
-          <div class="price">1,000円</div>
-        </li>
-        <li class="expense_item">
-          <div class="remark">酒</div>
-          <div class="price">1,100円</div>
-          <div class="total">2,100円</div>
-        </li>
+          <li class="expense_item">
+            <div class="remark">食費</div>
+            <div class="price">1,000円</div>
+          </li>
+          <li class="expense_item">
+            <div class="remark">酒</div>
+            <div class="price">1,100円</div>
+            <div class="total">2,100円</div>
+          </li>
         </ul>
-        <ul id="expense_list"></ul>
+        <ul id="date-list"></ul>
       </ul>
     </section>
 
   <!-- template -->
+  <script type="text/template" id="date-template">
+    <div class="new-date"><%= getMonth()+1 %>/<%= getDate() %></div>
+    <div class="new-remark"><input type="text" class="new-remark-field"/></div>
+    <div class="new-price"><input type="text" class="new-price-field"/></div>
+    <ul id="expense-list">
+  </script>
+
   <script type="text/template" id="item-template">
-    <li class="expense_item">
-      <div class="remark"><%= remark %></div>
-      <div class="price"><%= price %>円</div>
-      <a class="destroy"></a>
-    </li>
+    <div class="remark"><%= remark %></div>
+    <div class="price"><%= price %>円</div>
+    <a class="destroy"></a>
     <!--input class="edit" type="text" value="<%= remark %>" /-->
   </script>
 
