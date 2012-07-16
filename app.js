@@ -35,7 +35,7 @@
   Schema = mongoose.Schema;
 
   ExpenseSchema = new Schema({
-    date: Date,
+    date: String,
     remark: String,
     price: Number
   });

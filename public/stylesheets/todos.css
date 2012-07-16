@@ -5,11 +5,12 @@ body {
 }
 
 body {
-	font: 24px "Helvetica Neue", Helvetica, Arial, sans-serif;
+/* 	font: 24px "Helvetica Neue", Helvetica, Arial, sans-serif; */
+  font-family: sans-serif;
 	line-height: 1.4em;
 	background: #eeeeee;
 	color: #333333;
-	width: 800px;
+	width: 900px;
 	margin: 0 auto;
 	-webkit-font-smoothing: antialiased;
 }
@@ -116,25 +117,6 @@ ul li{
   width: 250px;
 }
 
-.expense_item{
-  padding-left: 4.5em;
-}
-
-.remark{
-  display: inline-block;
-  width: 150px;
-}
-
-.price{
-  display: inline-block;
-  width: 250px;
-}
-
-.total{
-  display: inline-block;
-  width: 100px;
-}
-
 #main {
 	display: none;
 }
@@ -146,10 +128,25 @@ ul li{
 }
 
 #expense-list li {
-	padding: 18px 20px 18px 0;
+/*	padding: 18px 20px 18px 0;
 	position: relative;
-	font-size: 24px;
+	font-size: 24px;*/
+  margin: 0 21em 0 4.7em;
 	border-bottom: 1px solid #cccccc;
+}
+
+#expense-list li .remark{
+  display: inline-block;
+  width: 150px;
+}
+
+#expense-list li .price{
+  display: inline-block;
+  width: 250px;
+}
+
+#date-list .total{
+  margin-left: 30em; 
 }
 
 #expense-list li:last-child {

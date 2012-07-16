@@ -1,18 +1,7 @@
 $ ->
-  Todo = Backbone.Model.extend
-    idAttribute: "_id"
-    defaults: ->
-      title: "empty todo..."
-      done: false
-
-    initialize: ->
-      if not @get("title")
-        @set({"title": @defaults().title})
-
-
-    clear: ->
-      @destroy()
-      
+  dateToKey = (date) ->
+    date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate()
+  
   Expense = Backbone.Model.extend
     idAttribute: "_id"
     defaults: ->
@@ -38,11 +27,29 @@ $ ->
     model: Expense
     url: "/expenses"
 
-  Expenses = new ExpenseList
-  
+    initialize: ->
+      @modelsForDate = {}
+
+      @on "add", (expense) ->
+        key = dateToKey(expense.get("date"))
+        this.modelsForDate[key] = expense
+        
+    parse: (res) ->
+      @parseDate(res)
+      res
+
+    parseDate: (res) ->
+      for obj in res
+        expense = new Expense(obj)
+        key = dateToKey(expense.get("date"))
+        @modelsForDate[key] = expense
+
+
+  Expenses = new ExpenseList()
+
   ExpenseView = Backbone.View.extend
     tagName: "li"
-    className: "expense_item"
+    className: "expense-item"
   
     template: _.template($('#item-template').html()),
     events:
@@ -56,7 +63,7 @@ $ ->
       @model.bind 'destroy', @remove, this
 
     render: ->
-      @$el.html @template(_.extend(@model.toJSON(), "display_date": @model.display_date()))
+      @$el.html @template(@model.toJSON())
 #       @$el.toggleClass('done', @model.get('done'))
       @input = @$('.edit')
       this
@@ -77,31 +84,62 @@ $ ->
     clear: ->
       @model.clear()
 
+  DateListView = Backbone.View.extend
+    el: $('#date-list')
+    list: {}
+  
+    initialize: ->
+      today = new Date()
+      i = today.getDate()
+      while i > 0
+        date = new Date(today.getFullYear(), today.getMonth(), i)
+        view  = new DateView(date)
+        @addList(view)
+        @$el.append view.render().el
+        i--
+
+    addList: (view) ->
+      date = view.date
+      key = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate()
+      @list[key] = view
+
   DateView = Backbone.View.extend
     tagName: 'li'
     template: _.template($('#date-template').html())
 
     events:
-      "keypress" : "addExpense"
+      "keypress input" : "addExpense"
   
-    initialize: (year, month, date) ->
-      @date = new Date(year, month, date)
+    initialize: (date) ->
+      Expenses.bind 'reset', @addForDate, this
+      Expenses.bind "add", @addOne, this
+      
+      @date = date
       @id = "new-" + (@date.getMonth()+1) + "-" + @date.getDate()
-
+      @total = 0
+  
     render: ->
       @$el.attr(id: @id)
-      @$el.html @template(@date)
+      @$el.html @template(@date, @total)
       @remark = @$el.find(".new-remark-field")
       @price = @$el.find(".new-price-field")
       this
 
     addOne: (expense) ->
+      @total += expense.get("price")
       view = new ExpenseView(model: expense)
       @$("#expense-list").append view.render().el
+      @$el.children(".total").html("日計: " + @total + "円")
+
+    addForDate: (expenses) ->
+      ret = expenses.filter (expense)->
+        @date.getMonth() == expense.get("date").getMonth() &&
+        @date.getDate() == expense.get("date").getDate()
+      , this
+      for ex in ret then @addOne(ex)
 
     addExpense: (e) ->
       return unless e.keyCode is 13
-      console.log(@remark.val(), @price.val())
       Expenses.create
         date: @date
         remark: @remark.val()
@@ -112,10 +150,6 @@ $ ->
   AppView = Backbone.View.extend
     el: $("#expenseapp")
 
-    events:
-      "keypress #remark"  : "addExpense"
-      "keypress #price"   : "addExpense"
-
     initialize: ->
       @input = @$("#new-todo")
       @display_date = @$("#selectdate")
@@ -123,21 +157,13 @@ $ ->
       @price = @$("#price")
       @dates = new Array()
       
-      Expenses.bind "add", @addOne, this
-      Expenses.bind 'reset', @addAll, this
       Expenses.bind "all", @render, this
 
       @footer = $('footer')
       @main = $('#main')
 
-      today = new Date()
-
-      i = 1
-      while i <= today.getDate()
-        view = new DateView(today.getYear(), today.getMonth(), i)
-        @dates.push(view)
-        @$("#date-list").append view.render().el
-        i++
+      list = new DateListView()
+      list.render()
 
       Expenses.fetch()
  
@@ -150,35 +176,5 @@ $ ->
 
     addOne: (expense) ->
       @dates[expense.get("date").getDate()-1].addOne(expense)
-
-    addTodo: (e) ->
-      return  unless e.keyCode is 13
-      Todos.create title: @input.val()
-      @input.val ""
-
-    addExpense: (e) ->
-      return unless e.keyCode is 13
-      Expenses.create
-        date: @getStringToDate(@display_date.val())
-        remark: @remark.val()
-        price: @price.val()
-      @remark.val ""
-      @price.val ""
-
-    addAll: ->
-      Expenses.each(@addOne, this)
-
-    getDateToString: (date) ->
-      "" + (date.getMonth()+1) + "/" + date.getDate()
-
-    getStringToDate: (str) ->
-      ary = str.split("/")
-      month_date = new Array()
-      for date in ary
-        month_date.push(parseInt(date))
-      date = new Date()
-      date.setMonth(month_date[0]-1)
-      date.setDate(month_date[1])
-      date
 
   App = new AppView()
