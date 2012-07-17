@@ -1,27 +1,17 @@
 $ ->
-  dateToKey = (date) ->
-    date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate()
-  
   Expense = Backbone.Model.extend
     idAttribute: "_id"
     defaults: ->
-      date: new Date()
+      year: 0
+      month: 0
+      date: 0
       remark: ""
       price: 0
 
     initialize: ->
-      # ちょっと考える
-      if not @get("date")
-        @set("date": @defaults().date)
-      if @get("date") isnt Date
-        @set("date": new Date(@get("date")))
 
     display_date: ->
-      @getDateToString @get("date")
-      
-    getDateToString: (target) ->
-      if target is String  then target = new Date(target)
-      "" + (target.getMonth()+1) + "/" + target.getDate()
+      @get("month") + "/" + @get("date")
 
   ExpenseList = Backbone.Collection.extend
     model: Expense
@@ -31,7 +21,7 @@ $ ->
       @modelsForDate = {}
 
       @on "add", (expense) ->
-        key = dateToKey(expense.get("date"))
+        key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
         this.modelsForDate[key] = expense
         
     parse: (res) ->
@@ -41,7 +31,7 @@ $ ->
     parseDate: (res) ->
       for obj in res
         expense = new Expense(obj)
-        key = dateToKey(expense.get("date"))
+        key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
         @modelsForDate[key] = expense
 
 
@@ -90,17 +80,17 @@ $ ->
   
     initialize: ->
       today = new Date()
+      year = today.getFullYear()
+      month = (today.getMonth()+1)
       i = today.getDate()
       while i > 0
-        date = new Date(today.getFullYear(), today.getMonth(), i)
-        view  = new DateView(date)
+        view  = new DateView(year, month, i)
         @addList(view)
         @$el.append view.render().el
         i--
 
     addList: (view) ->
-      date = view.date
-      key = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate()
+      key = view.month + "/" + view.date
       @list[key] = view
 
   DateView = Backbone.View.extend
@@ -108,24 +98,27 @@ $ ->
     template: _.template($('#date-template').html())
 
     events:
-      "keypress input" : "addExpense"
+      "keypress .new-price" : "addExpense"
   
-    initialize: (date) ->
+    initialize: (year, month, date) ->
       Expenses.bind 'reset', @addForDate, this
       Expenses.bind "add", @addOne, this
       
+      @year = year
+      @month = month
       @date = date
-      @id = "new-" + (@date.getMonth()+1) + "-" + @date.getDate()
+      @id = "new-" + @month + "-" + @date
       @total = 0
   
     render: ->
       @$el.attr(id: @id)
-      @$el.html @template(@date, @total)
+      @$el.html @template(@total)
       @remark = @$el.find(".new-remark-field")
       @price = @$el.find(".new-price-field")
       this
 
     addOne: (expense) ->
+      return unless expense.get("year") == @year && expense.get("month") == @month && expense.get("date") == @date
       @total += expense.get("price")
       view = new ExpenseView(model: expense)
       @$("#expense-list").append view.render().el
@@ -133,14 +126,16 @@ $ ->
 
     addForDate: (expenses) ->
       ret = expenses.filter (expense)->
-        @date.getMonth() == expense.get("date").getMonth() &&
-        @date.getDate() == expense.get("date").getDate()
+        @month == expense.get("month") &&
+        @date == expense.get("date")
       , this
       for ex in ret then @addOne(ex)
 
     addExpense: (e) ->
       return unless e.keyCode is 13
       Expenses.create
+        year: @year
+        month: @month
         date: @date
         remark: @remark.val()
         price: @price.val()

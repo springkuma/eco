@@ -24,7 +24,9 @@ app.configure "production", ->
 
 Schema = mongoose.Schema
 ExpenseSchema = new Schema
-  date: String
+  year: Number
+  month: Number
+  date: Number
   remark: String
   price: Number
 

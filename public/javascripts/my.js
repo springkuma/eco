@@ -2,39 +2,21 @@
 (function() {
 
   $(function() {
-    var App, AppView, DateListView, DateView, Expense, ExpenseList, ExpenseView, Expenses, dateToKey;
-    dateToKey = function(date) {
-      return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
-    };
+    var App, AppView, DateListView, DateView, Expense, ExpenseList, ExpenseView, Expenses;
     Expense = Backbone.Model.extend({
       idAttribute: "_id",
       defaults: function() {
         return {
-          date: new Date(),
+          year: 0,
+          month: 0,
+          date: 0,
           remark: "",
           price: 0
         };
       },
-      initialize: function() {
-        if (!this.get("date")) {
-          this.set({
-            "date": this.defaults().date
-          });
-        }
-        if (this.get("date") !== Date) {
-          return this.set({
-            "date": new Date(this.get("date"))
-          });
-        }
-      },
+      initialize: function() {},
       display_date: function() {
-        return this.getDateToString(this.get("date"));
-      },
-      getDateToString: function(target) {
-        if (target === String) {
-          target = new Date(target);
-        }
-        return "" + (target.getMonth() + 1) + "/" + target.getDate();
+        return this.get("month") + "/" + this.get("date");
       }
     });
     ExpenseList = Backbone.Collection.extend({
@@ -44,7 +26,7 @@
         this.modelsForDate = {};
         return this.on("add", function(expense) {
           var key;
-          key = dateToKey(expense.get("date"));
+          key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
           return this.modelsForDate[key] = expense;
         });
       },
@@ -58,7 +40,7 @@
         for (_i = 0, _len = res.length; _i < _len; _i++) {
           obj = res[_i];
           expense = new Expense(obj);
-          key = dateToKey(expense.get("date"));
+          key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
           _results.push(this.modelsForDate[key] = expense);
         }
         return _results;
@@ -112,13 +94,14 @@
       el: $('#date-list'),
       list: {},
       initialize: function() {
-        var date, i, today, view, _results;
+        var i, month, today, view, year, _results;
         today = new Date();
+        year = today.getFullYear();
+        month = today.getMonth() + 1;
         i = today.getDate();
         _results = [];
         while (i > 0) {
-          date = new Date(today.getFullYear(), today.getMonth(), i);
-          view = new DateView(date);
+          view = new DateView(year, month, i);
           this.addList(view);
           this.$el.append(view.render().el);
           _results.push(i--);
@@ -126,9 +109,8 @@
         return _results;
       },
       addList: function(view) {
-        var date, key;
-        date = view.date;
-        key = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+        var key;
+        key = view.month + "/" + view.date;
         return this.list[key] = view;
       }
     });
@@ -136,26 +118,31 @@
       tagName: 'li',
       template: _.template($('#date-template').html()),
       events: {
-        "keypress input": "addExpense"
+        "keypress .new-price": "addExpense"
       },
-      initialize: function(date) {
+      initialize: function(year, month, date) {
         Expenses.bind('reset', this.addForDate, this);
         Expenses.bind("add", this.addOne, this);
+        this.year = year;
+        this.month = month;
         this.date = date;
-        this.id = "new-" + (this.date.getMonth() + 1) + "-" + this.date.getDate();
+        this.id = "new-" + this.month + "-" + this.date;
         return this.total = 0;
       },
       render: function() {
         this.$el.attr({
           id: this.id
         });
-        this.$el.html(this.template(this.date, this.total));
+        this.$el.html(this.template(this.total));
         this.remark = this.$el.find(".new-remark-field");
         this.price = this.$el.find(".new-price-field");
         return this;
       },
       addOne: function(expense) {
         var view;
+        if (!(expense.get("year") === this.year && expense.get("month") === this.month && expense.get("date") === this.date)) {
+          return;
+        }
         this.total += expense.get("price");
         view = new ExpenseView({
           model: expense
@@ -166,7 +153,7 @@
       addForDate: function(expenses) {
         var ex, ret, _i, _len, _results;
         ret = expenses.filter(function(expense) {
-          return this.date.getMonth() === expense.get("date").getMonth() && this.date.getDate() === expense.get("date").getDate();
+          return this.month === expense.get("month") && this.date === expense.get("date");
         }, this);
         _results = [];
         for (_i = 0, _len = ret.length; _i < _len; _i++) {
@@ -180,6 +167,8 @@
           return;
         }
         Expenses.create({
+          year: this.year,
+          month: this.month,
           date: this.date,
           remark: this.remark.val(),
           price: this.price.val()
