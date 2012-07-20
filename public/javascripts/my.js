@@ -171,7 +171,7 @@
           month: this.month,
           date: this.date,
           remark: this.remark.val(),
-          price: this.price.val()
+          price: parseInt(this.price.val(), 10)
         });
         this.remark.val("");
         return this.price.val("");

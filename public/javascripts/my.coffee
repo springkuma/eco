@@ -83,7 +83,7 @@ $ ->
     initialize: ->
       today = new Date()
       year = today.getFullYear()
-      month = (today.getMonth()+1)
+      month = today.getMonth()+1
       i = today.getDate()
       while i > 0
         view  = new DateView(year, month, i)
@@ -120,6 +120,7 @@ $ ->
       this
 
     addOne: (expense) ->
+      # ちょっと待てよ。。。addOneとaddForDateで同じ事チェックしてる
       return unless expense.get("year") == @year && expense.get("month") == @month && expense.get("date") == @date
       @total += expense.get("price")
       view = new ExpenseView(model: expense)
@@ -140,7 +141,7 @@ $ ->
         month: @month
         date: @date
         remark: @remark.val()
-        price: @price.val()
+        price: parseInt(@price.val(), 10)
       @remark.val ""
       @price.val ""
 
