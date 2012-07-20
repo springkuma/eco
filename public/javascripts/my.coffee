@@ -23,6 +23,8 @@ $ ->
       @on "add", (expense) ->
         key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
         this.modelsForDate[key] = expense
+
+      # reset時の処理を追加しよう parseはなしでいいよ
         
     parse: (res) ->
       @parseDate(res)
