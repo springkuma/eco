@@ -24,11 +24,31 @@
       url: "/expenses",
       initialize: function() {
         this.modelsForDate = {};
-        return this.on("add", function(expense) {
+        this.on("add", function(expense) {
           var key;
-          key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
-          return this.modelsForDate[key] = expense;
+          key = this.generate(expense);
+          this.modelsForDate[key] = expense;
+          return trigger("add-" + key, expense);
         });
+        return this.on("reset", function(expenses) {
+          var key, models, _ref, _results;
+          expenses.each(function(expense) {
+            var key;
+            key = this.generate(expense);
+            return this.modelsForDate[key] = expense;
+          }, this);
+          console.log(typeof this.modelsForDate);
+          _ref = this.modelsForDate;
+          _results = [];
+          for (key in _ref) {
+            models = _ref[key];
+            _results.push(console.log(key, models));
+          }
+          return _results;
+        });
+      },
+      generate: function(expense) {
+        return expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
       },
       parse: function(res) {
         this.parseDate(res);

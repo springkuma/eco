@@ -21,9 +21,24 @@ $ ->
       @modelsForDate = {}
 
       @on "add", (expense) ->
-        key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
-        this.modelsForDate[key] = expense
+        key = @generate(expense)
+        @modelsForDate[key] = expense
+        trigger("add-" + key, expense)
+
+      @on "reset", (expenses) ->
+        expenses.each (expense) ->
+          key = @generate(expense)
+          @modelsForDate[key] = expense
+        , this
+
+        console.log(typeof @modelsForDate)
+        for key, models of @modelsForDate
+          console.log key, models
         
+    generate: (expense) ->
+      expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
+    
+    
     parse: (res) ->
       @parseDate(res)
       res
