@@ -171,9 +171,6 @@
         this.main.show();
         this.footer.show();
         return this;
-      },
-      addOne: function(expense) {
-        return this.dates[expense.get("date").getDate() - 1].addOne(expense);
       }
     });
     return App = new AppView();

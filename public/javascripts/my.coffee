@@ -153,7 +153,4 @@ $ ->
       @footer.show()
       this
 
-    addOne: (expense) ->
-      @dates[expense.get("date").getDate()-1].addOne(expense)
-
   App = new AppView()
