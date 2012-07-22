@@ -8,7 +8,7 @@ body {
 /* 	font: 24px "Helvetica Neue", Helvetica, Arial, sans-serif; */
   font-family: sans-serif;
 	line-height: 1.4em;
-	background: #eeeeee;
+	background: #C7E3D0;
 	color: #333333;
 	width: 900px;
 	margin: 0 auto;
@@ -101,19 +101,11 @@ ul li{
   margin-right: 2em;
 }
 
-.new-remark {
-  display: inline-block;
-}
-
-.new-remark-field{
+.remark-field {
   width: 150px;
 }
 
-.new-price {
-  display: inline-block;
-}
-
-.new-price-field{
+.price-field {
   width: 250px;
 }
 
@@ -190,8 +182,7 @@ ul li{
 #expense-list li.editing .edit {
 	display: block;
 	width: 444px;
-	padding: 13px 15px 14px 20px;
-	margin: 0;
+  margin-right: 2em;
 }
 
 #expense-list li.editing .view {

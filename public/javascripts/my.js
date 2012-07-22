@@ -13,8 +13,7 @@
           remark: "",
           price: 0
         };
-      },
-      initialize: function() {}
+      }
     });
     DateList = Backbone.Collection.extend({
       dates: {},
@@ -36,7 +35,7 @@
           this.dateList.setDate(key, expense);
           return this.trigger("add-" + key, expense);
         }, this);
-        return this.bind("reset", function(expenses) {
+        return this.on("reset", function(expenses) {
           return expenses.each(function(expense) {
             var key;
             key = this.generate(expense);
@@ -56,7 +55,7 @@
       template: _.template($('#item-template').html()),
       events: {
         "click a.destroy": "clear",
-        "dblclick .view": "edit",
+        "dblclick .remark": "edit",
         "keypress .edit": "updateOnEnter",
         "blur .edit": "close"
       },
@@ -121,7 +120,6 @@
         this.year = year;
         this.month = month;
         this.date = date;
-        this.id = "new-" + this.month + "-" + this.date;
         return this.total = 0;
       },
       render: function() {

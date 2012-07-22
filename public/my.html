@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <meta charset="utf-i">
+  <meta charset="utf-8">
   <title>backboneサンプル</title>
   <link rel="stylesheet" href="stylesheets/todos.css"></link>
   <script src="javascripts/vendor/json2.js"></script>
@@ -27,16 +27,22 @@
   <!-- template -->
   <script type="text/template" id="date-template">
     <div class="new-date"><%= this.month %>/<%= this.date %></div>
-    <div class="new-remark"><input type="text" class="new-remark-field"/></div>
-    <div class="new-price"><input type="text" class="new-price-field"/></div>
+    <input type="text" class="remark-field"/>
+    <input type="text" class="price-field"/>
     <ul id="expense-list"></ul>
     <div class="total"></div>
   </script>
 
   <script type="text/template" id="item-template">
-    <div class="remark"><%= remark %></div>
-    <div class="price"><%= price %>円</div>
-    <a class="destroy"></a>
+    <div class="view">
+      <div class="remark"><%= remark %></div>
+      <div class="price"><%= price %>円</div>
+      <a class="destroy"></a>
+    </div>
+    <div class="edit">
+      <input class="remark-field" type="text" value="<%= remark %>" />
+      <input class="price-field" type="text" value="<%= price %>" />
+    </div>
     <!--input class="edit" type="text" value="<%= remark %>" /-->
   </script>
 

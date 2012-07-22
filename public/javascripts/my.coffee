@@ -8,8 +8,6 @@ $ ->
       remark: ""
       price: 0
 
-    initialize: ->
-
   DateList = Backbone.Collection.extend
     dates: {}
 
@@ -32,7 +30,7 @@ $ ->
         @trigger("add-" + key, expense)
       , this
 
-      @bind "reset", (expenses) ->
+      @on "reset", (expenses) ->
         expenses.each (expense) ->
           key = @generate(expense)
           @dateList.setDate(key, expense)
@@ -52,7 +50,7 @@ $ ->
     template: _.template($('#item-template').html()),
     events:
       "click a.destroy": "clear"
-      "dblclick .view": "edit"
+      "dblclick .remark": "edit"
       "keypress .edit": "updateOnEnter"
       "blur .edit"    : "close"
     
@@ -108,7 +106,7 @@ $ ->
       @year = year
       @month = month
       @date = date
-      @id = "new-" + @month + "-" + @date
+#       @id = "new-" + @month + "-" + @date
       @total = 0
   
     render: ->
