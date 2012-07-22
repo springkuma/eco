@@ -10,45 +10,38 @@ $ ->
 
     initialize: ->
 
-    display_date: ->
-      @get("month") + "/" + @get("date")
+  DateList = Backbone.Collection.extend
+    dates: {}
 
+    setDate: (key, expense) ->
+      @dates[key] = expense
+
+    getDate: (key) ->
+      @dates[key]
+  
   ExpenseList = Backbone.Collection.extend
     model: Expense
     url: "/expenses"
 
     initialize: ->
-      @modelsForDate = {}
-
+      @dateList = new DateList()
+      
       @on "add", (expense) ->
         key = @generate(expense)
-        @modelsForDate[key] = expense
-        trigger("add-" + key, expense)
+        @dateList.setDate(key, expense)
+        @trigger("add-" + key, expense)
+      , this
 
-      @on "reset", (expenses) ->
+      @bind "reset", (expenses) ->
         expenses.each (expense) ->
           key = @generate(expense)
-          @modelsForDate[key] = expense
+          @dateList.setDate(key, expense)
+          @trigger("add-" + key, expense)
         , this
-
-        console.log(typeof @modelsForDate)
-        for key, models of @modelsForDate
-          console.log key, models
+      , this
         
     generate: (expense) ->
       expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
-    
-    
-    parse: (res) ->
-      @parseDate(res)
-      res
-
-    parseDate: (res) ->
-      for obj in res
-        expense = new Expense(obj)
-        key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
-        @modelsForDate[key] = expense
-
 
   Expenses = new ExpenseList()
 
@@ -91,7 +84,6 @@ $ ->
 
   DateListView = Backbone.View.extend
     el: $('#date-list')
-    list: {}
   
     initialize: ->
       today = new Date()
@@ -100,13 +92,8 @@ $ ->
       i = today.getDate()
       while i > 0
         view  = new DateView(year, month, i)
-        @addList(view)
         @$el.append view.render().el
         i--
-
-    addList: (view) ->
-      key = view.month + "/" + view.date
-      @list[key] = view
 
   DateView = Backbone.View.extend
     tagName: 'li'
@@ -116,8 +103,7 @@ $ ->
       "keypress .new-price" : "addExpense"
   
     initialize: (year, month, date) ->
-      Expenses.bind 'reset', @addForDate, this
-      Expenses.bind "add", @addOne, this
+      Expenses.bind "add-" + year + "/" + month + "/" + date, @addOne, this
       
       @year = year
       @month = month
@@ -133,19 +119,10 @@ $ ->
       this
 
     addOne: (expense) ->
-      # ちょっと待てよ。。。addOneとaddForDateで同じ事チェックしてる
-      return unless expense.get("year") == @year && expense.get("month") == @month && expense.get("date") == @date
       @total += expense.get("price")
       view = new ExpenseView(model: expense)
       @$("#expense-list").append view.render().el
       @$el.children(".total").html("日計: " + @total + "円")
-
-    addForDate: (expenses) ->
-      ret = expenses.filter (expense)->
-        @month == expense.get("month") &&
-        @date == expense.get("date")
-      , this
-      for ex in ret then @addOne(ex)
 
     addExpense: (e) ->
       return unless e.keyCode is 13
@@ -162,27 +139,18 @@ $ ->
     el: $("#expenseapp")
 
     initialize: ->
-      @input = @$("#new-todo")
-      @display_date = @$("#selectdate")
-      @remark = @$("#remark")
-      @price = @$("#price")
-      @dates = new Array()
-      
       Expenses.bind "all", @render, this
 
       @footer = $('footer')
       @main = $('#main')
 
       list = new DateListView()
-      list.render()
 
       Expenses.fetch()
  
     render: ->
       @main.show()
       @footer.show()
-
-      $("#yama").html Expenses.length
       this
 
     addOne: (expense) ->

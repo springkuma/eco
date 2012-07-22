@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var App, AppView, DateListView, DateView, Expense, ExpenseList, ExpenseView, Expenses;
+    var App, AppView, DateList, DateListView, DateView, Expense, ExpenseList, ExpenseView, Expenses;
     Expense = Backbone.Model.extend({
       idAttribute: "_id",
       defaults: function() {
@@ -14,56 +14,39 @@
           price: 0
         };
       },
-      initialize: function() {},
-      display_date: function() {
-        return this.get("month") + "/" + this.get("date");
+      initialize: function() {}
+    });
+    DateList = Backbone.Collection.extend({
+      dates: {},
+      setDate: function(key, expense) {
+        return this.dates[key] = expense;
+      },
+      getDate: function(key) {
+        return this.dates[key];
       }
     });
     ExpenseList = Backbone.Collection.extend({
       model: Expense,
       url: "/expenses",
       initialize: function() {
-        this.modelsForDate = {};
+        this.dateList = new DateList();
         this.on("add", function(expense) {
           var key;
           key = this.generate(expense);
-          this.modelsForDate[key] = expense;
-          return trigger("add-" + key, expense);
-        });
-        return this.on("reset", function(expenses) {
-          var key, models, _ref, _results;
-          expenses.each(function(expense) {
+          this.dateList.setDate(key, expense);
+          return this.trigger("add-" + key, expense);
+        }, this);
+        return this.bind("reset", function(expenses) {
+          return expenses.each(function(expense) {
             var key;
             key = this.generate(expense);
-            return this.modelsForDate[key] = expense;
+            this.dateList.setDate(key, expense);
+            return this.trigger("add-" + key, expense);
           }, this);
-          console.log(typeof this.modelsForDate);
-          _ref = this.modelsForDate;
-          _results = [];
-          for (key in _ref) {
-            models = _ref[key];
-            _results.push(console.log(key, models));
-          }
-          return _results;
-        });
+        }, this);
       },
       generate: function(expense) {
         return expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
-      },
-      parse: function(res) {
-        this.parseDate(res);
-        return res;
-      },
-      parseDate: function(res) {
-        var expense, key, obj, _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = res.length; _i < _len; _i++) {
-          obj = res[_i];
-          expense = new Expense(obj);
-          key = expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
-          _results.push(this.modelsForDate[key] = expense);
-        }
-        return _results;
       }
     });
     Expenses = new ExpenseList();
@@ -112,7 +95,6 @@
     });
     DateListView = Backbone.View.extend({
       el: $('#date-list'),
-      list: {},
       initialize: function() {
         var i, month, today, view, year, _results;
         today = new Date();
@@ -122,16 +104,10 @@
         _results = [];
         while (i > 0) {
           view = new DateView(year, month, i);
-          this.addList(view);
           this.$el.append(view.render().el);
           _results.push(i--);
         }
         return _results;
-      },
-      addList: function(view) {
-        var key;
-        key = view.month + "/" + view.date;
-        return this.list[key] = view;
       }
     });
     DateView = Backbone.View.extend({
@@ -141,8 +117,7 @@
         "keypress .new-price": "addExpense"
       },
       initialize: function(year, month, date) {
-        Expenses.bind('reset', this.addForDate, this);
-        Expenses.bind("add", this.addOne, this);
+        Expenses.bind("add-" + year + "/" + month + "/" + date, this.addOne, this);
         this.year = year;
         this.month = month;
         this.date = date;
@@ -160,27 +135,12 @@
       },
       addOne: function(expense) {
         var view;
-        if (!(expense.get("year") === this.year && expense.get("month") === this.month && expense.get("date") === this.date)) {
-          return;
-        }
         this.total += expense.get("price");
         view = new ExpenseView({
           model: expense
         });
         this.$("#expense-list").append(view.render().el);
         return this.$el.children(".total").html("日計: " + this.total + "円");
-      },
-      addForDate: function(expenses) {
-        var ex, ret, _i, _len, _results;
-        ret = expenses.filter(function(expense) {
-          return this.month === expense.get("month") && this.date === expense.get("date");
-        }, this);
-        _results = [];
-        for (_i = 0, _len = ret.length; _i < _len; _i++) {
-          ex = ret[_i];
-          _results.push(this.addOne(ex));
-        }
-        return _results;
       },
       addExpense: function(e) {
         if (e.keyCode !== 13) {
@@ -201,22 +161,15 @@
       el: $("#expenseapp"),
       initialize: function() {
         var list;
-        this.input = this.$("#new-todo");
-        this.display_date = this.$("#selectdate");
-        this.remark = this.$("#remark");
-        this.price = this.$("#price");
-        this.dates = new Array();
         Expenses.bind("all", this.render, this);
         this.footer = $('footer');
         this.main = $('#main');
         list = new DateListView();
-        list.render();
         return Expenses.fetch();
       },
       render: function() {
         this.main.show();
         this.footer.show();
-        $("#yama").html(Expenses.length);
         return this;
       },
       addOne: function(expense) {
