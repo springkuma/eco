@@ -56,16 +56,19 @@
       events: {
         "click a.destroy": "clear",
         "dblclick .remark": "edit",
-        "keypress .edit": "updateOnEnter",
-        "blur .edit": "close"
+        "keypress .edit input": "updateOnEnter",
+        "blur .edit input": "close"
       },
       initialize: function() {
         this.model.bind('change', this.render, this);
         return this.model.bind('destroy', this.remove, this);
       },
       render: function() {
+        console.log(this.model);
         this.$el.html(this.template(this.model.toJSON()));
         this.input = this.$('.edit');
+        this.remark = this.$('.remark-field');
+        this.price = this.$('.price-field');
         return this;
       },
       edit: function() {
@@ -78,18 +81,17 @@
         }
       },
       close: function() {
-        var value;
-        value = this.input.val();
-        if (!value) {
-          this.clear();
-        }
         this.model.save({
-          title: value
+          remark: this.remark.val(),
+          price: this.price.val()
         });
         return this.$el.removeClass("editing");
       },
       clear: function() {
         return this.model.clear();
+      },
+      remove: function() {
+        return console.log("remove");
       }
     });
     DateListView = Backbone.View.extend({

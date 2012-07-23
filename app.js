@@ -77,20 +77,18 @@
     });
   });
 
-  app.put("/todos/:id", function(req, res) {
+  app.put("/expenses/:id", function(req, res) {
     var data;
-    data = {
-      title: req.body.title,
-      done: req.body.done
-    };
-    return Todo.update({
+    data = req.body;
+    return Expense.update({
       _id: req.params.id
-    }, data, function(error, todo) {
+    }, data, function(error, expense) {
       if (!error) {
         return res.json({
           success: true
         });
       } else {
+        console.log(error);
         return res.json({
           success: false
         });

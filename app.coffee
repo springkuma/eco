@@ -51,12 +51,13 @@ app.post "/expenses", (req, res) ->
     else
       res.json success: false
 
-app.put "/todos/:id", (req, res) ->
-  data = title: req.body.title, done: req.body.done
-  Todo.update {_id: req.params.id}, data, (error, todo) ->
+app.put "/expenses/:id", (req, res) ->
+  data = req.body
+  Expense.update {_id: req.params.id}, data, (error, expense) ->
     if not error
       res.json success: true
     else
+      console.log(error)
       res.json success: false
 
 app.delete "/todos/:id", (req, res) ->

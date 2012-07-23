@@ -51,17 +51,20 @@ $ ->
     events:
       "click a.destroy": "clear"
       "dblclick .remark": "edit"
-      "keypress .edit": "updateOnEnter"
-      "blur .edit"    : "close"
+      "keypress .edit input": "updateOnEnter"
+      "blur .edit input"    : "close"
     
     initialize: ->
       @model.bind 'change', @render, this
       @model.bind 'destroy', @remove, this
 
     render: ->
+      console.log(@model)
       @$el.html @template(@model.toJSON())
 #       @$el.toggleClass('done', @model.get('done'))
       @input = @$('.edit')
+      @remark = @$('.remark-field')
+      @price = @$('.price-field')
       this
 
     edit: ->
@@ -72,13 +75,14 @@ $ ->
       if e.keyCode == 13 then @close()
 
     close: ->
-      value = @input.val()
-      if not value then @clear()
-      @model.save({title: value})
+      @model.save(remark: @remark.val(), price: @price.val())
       @$el.removeClass("editing")
 
     clear: ->
       @model.clear()
+
+    remove: ->
+      console.log("remove")
 
   DateListView = Backbone.View.extend
     el: $('#date-list')
@@ -99,7 +103,8 @@ $ ->
 
     events:
       "keypress .new-price" : "addExpense"
-  
+
+    # 引数はhashで受け取ろう
     initialize: (year, month, date) ->
       Expenses.bind "add-" + year + "/" + month + "/" + date, @addOne, this
       
