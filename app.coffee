@@ -52,18 +52,22 @@ app.post "/expenses", (req, res) ->
       res.json success: false
 
 app.put "/expenses/:id", (req, res) ->
-  data = req.body
+  data =
+    year: req.body.year
+    month: req.body.month
+    date: req.body.date
+    remark: req.body.remark
+    price: req.body.price
   Expense.update {_id: req.params.id}, data, (error, expense) ->
     if not error
-      res.json success: true
+      res.json exepnse
     else
-      console.log(error)
       res.json success: false
 
-app.delete "/todos/:id", (req, res) ->
-  Todo.findById req.params.id, (error, todo) ->
+app.delete "/expenses/:id", (req, res) ->
+  Expense.findById req.params.id, (error, expense) ->
     if not error
-      todo.remove (delete_error) ->
+      expense.remove (delete_error) ->
         if not delete_error
           res.json success: true
         else

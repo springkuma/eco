@@ -50,7 +50,7 @@ $ ->
     template: _.template($('#item-template').html()),
     events:
       "click a.destroy": "clear"
-      "dblclick .remark": "edit"
+      "dblclick .view": "edit"
       "keypress .edit input": "updateOnEnter"
       "blur .edit input"    : "close"
     
@@ -59,9 +59,7 @@ $ ->
       @model.bind 'destroy', @remove, this
 
     render: ->
-      console.log(@model)
       @$el.html @template(@model.toJSON())
-#       @$el.toggleClass('done', @model.get('done'))
       @input = @$('.edit')
       @remark = @$('.remark-field')
       @price = @$('.price-field')
@@ -75,34 +73,34 @@ $ ->
       if e.keyCode == 13 then @close()
 
     close: ->
-      @model.save(remark: @remark.val(), price: @price.val())
+      @model.save
+        remark: @remark.val()
+        price: parseInt(@price.val(), 10)
+      console.log @model
       @$el.removeClass("editing")
 
     clear: ->
-      @model.clear()
-
-    remove: ->
-      console.log("remove")
+      @model.destroy()
 
   DateListView = Backbone.View.extend
     el: $('#date-list')
+    startDate: 25  # TODO サーバへ
   
     initialize: ->
       today = new Date()
-      year = today.getFullYear()
-      month = today.getMonth()+1
-      i = today.getDate()
-      while i > 0
-        view  = new DateView(year, month, i)
-        @$el.append view.render().el
-        i--
+      i = @startDate
+      while i <= today.getDate()
+        target = new Date(today.getFullYear(), today.getMonth(), i)
+        view  = new DateView(target.getFullYear(), target.getMonth()+1, target.getDate())
+        @$el.prepend view.render().el
+        i = target.getDate() + 1
 
   DateView = Backbone.View.extend
     tagName: 'li'
     template: _.template($('#date-template').html())
 
     events:
-      "keypress .new-price" : "addExpense"
+      "keypress .new-remark-field + .new-price-field" : "addExpense"
 
     # 引数はhashで受け取ろう
     initialize: (year, month, date) ->
@@ -111,7 +109,7 @@ $ ->
       @year = year
       @month = month
       @date = date
-#       @id = "new-" + @month + "-" + @date
+      @id = "new-" + @month + "-" + @date
       @total = 0
   
     render: ->

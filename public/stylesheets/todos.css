@@ -123,7 +123,8 @@ ul li{
 /*	padding: 18px 20px 18px 0;
 	position: relative;
 	font-size: 24px;*/
-  margin: 0 21em 0 4.7em;
+  position: relative;
+  margin: 0 23.2em 0 4.7em;
 	border-bottom: 1px solid #cccccc;
 }
 
@@ -152,9 +153,8 @@ ul li{
 
 #expense-list .destroy {
 	position: absolute;
-	right: 5px;
-	top: 20px;
-	display: none;
+	top: 0px;
+	right: 0px;
 	cursor: pointer;
 	width: 20px;
 	height: 20px;

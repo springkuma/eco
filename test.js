@@ -1,17 +1,16 @@
-var Person = function() {
-};
-Person.prototype = {
-    
-    hello: function () {
-        console.log('Hello');
-        this.hoge();
-    },
-    hoge: function() {
-        console.log('ho ge !');
-    }
+(function(n){
+  var a = 'yama3'
+  console.log(n); 
+ }
+)('yama');
 
-};
-var bob = new Person();
-bob.hello();
-bob.hoge();
-cosole.log("1");
+!function(n){
+  var b = "yama2";
+  console.log(n);
+}('yama2');
+
+
+var before = "test";
+(function(){
+  console.log(before); 
+}());

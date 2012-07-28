@@ -1331,7 +1331,7 @@
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
     }
-
+    
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';

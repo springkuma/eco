@@ -79,16 +79,19 @@
 
   app.put("/expenses/:id", function(req, res) {
     var data;
-    data = req.body;
+    data = {
+      year: req.body.year,
+      month: req.body.month,
+      date: req.body.date,
+      remark: req.body.remark,
+      price: req.body.price
+    };
     return Expense.update({
       _id: req.params.id
     }, data, function(error, expense) {
       if (!error) {
-        return res.json({
-          success: true
-        });
+        return res.json(exepnse);
       } else {
-        console.log(error);
         return res.json({
           success: false
         });
@@ -96,10 +99,10 @@
     });
   });
 
-  app["delete"]("/todos/:id", function(req, res) {
-    return Todo.findById(req.params.id, function(error, todo) {
+  app["delete"]("/expenses/:id", function(req, res) {
+    return Expense.findById(req.params.id, function(error, expense) {
       if (!error) {
-        return todo.remove(function(delete_error) {
+        return expense.remove(function(delete_error) {
           if (!delete_error) {
             return res.json({
               success: true

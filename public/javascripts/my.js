@@ -55,7 +55,7 @@
       template: _.template($('#item-template').html()),
       events: {
         "click a.destroy": "clear",
-        "dblclick .remark": "edit",
+        "dblclick .view": "edit",
         "keypress .edit input": "updateOnEnter",
         "blur .edit input": "close"
       },
@@ -64,7 +64,6 @@
         return this.model.bind('destroy', this.remove, this);
       },
       render: function() {
-        console.log(this.model);
         this.$el.html(this.template(this.model.toJSON()));
         this.input = this.$('.edit');
         this.remark = this.$('.remark-field');
@@ -83,30 +82,28 @@
       close: function() {
         this.model.save({
           remark: this.remark.val(),
-          price: this.price.val()
+          price: parseInt(this.price.val(), 10)
         });
+        console.log(this.model);
         return this.$el.removeClass("editing");
       },
       clear: function() {
-        return this.model.clear();
-      },
-      remove: function() {
-        return console.log("remove");
+        return this.model.destroy();
       }
     });
     DateListView = Backbone.View.extend({
       el: $('#date-list'),
+      startDate: 25,
       initialize: function() {
-        var i, month, today, view, year, _results;
+        var i, target, today, view, _results;
         today = new Date();
-        year = today.getFullYear();
-        month = today.getMonth() + 1;
-        i = today.getDate();
+        i = this.startDate;
         _results = [];
-        while (i > 0) {
-          view = new DateView(year, month, i);
-          this.$el.append(view.render().el);
-          _results.push(i--);
+        while (i <= today.getDate()) {
+          target = new Date(today.getFullYear(), today.getMonth(), i);
+          view = new DateView(target.getFullYear(), target.getMonth() + 1, target.getDate());
+          this.$el.prepend(view.render().el);
+          _results.push(i = target.getDate() + 1);
         }
         return _results;
       }
@@ -115,13 +112,14 @@
       tagName: 'li',
       template: _.template($('#date-template').html()),
       events: {
-        "keypress .new-price": "addExpense"
+        "keypress .new-remark-field + .new-price-field": "addExpense"
       },
       initialize: function(year, month, date) {
         Expenses.bind("add-" + year + "/" + month + "/" + date, this.addOne, this);
         this.year = year;
         this.month = month;
         this.date = date;
+        this.id = "new-" + this.month + "-" + this.date;
         return this.total = 0;
       },
       render: function() {
