@@ -66,9 +66,7 @@
     expense = new Expense(req.body);
     return expense.save(function(error) {
       if (!error) {
-        return res.json({
-          success: true
-        });
+        return res.json(expense);
       } else {
         return res.json({
           success: false
@@ -90,7 +88,7 @@
       _id: req.params.id
     }, data, function(error, expense) {
       if (!error) {
-        return res.json(exepnse);
+        return res.json(expense);
       } else {
         return res.json({
           success: false

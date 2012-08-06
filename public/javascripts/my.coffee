@@ -30,6 +30,17 @@ $ ->
         @trigger("add-" + key, expense)
       , this
 
+      @on "change:price", (expense, value) ->
+        key = @generate(expense)
+        @trigger("refreshTotal-" + key, expense, value)
+      , this
+
+      @on "destroy", (expense) ->
+        console.log expense
+        key = @generate(expense)
+        @trigger("refreshTotal-" + key, expense)
+      , this
+
       @on "reset", (expenses) ->
         expenses.each (expense) ->
           key = @generate(expense)
@@ -76,7 +87,6 @@ $ ->
       @model.save
         remark: @remark.val()
         price: parseInt(@price.val(), 10)
-      console.log @model
       @$el.removeClass("editing")
 
     clear: ->
@@ -85,16 +95,17 @@ $ ->
   DateListView = Backbone.View.extend
     el: $('#date-list')
     startDate: 25  # TODO サーバへ
-  
+
     initialize: ->
       today = new Date()
       i = @startDate
-      while i <= today.getDate()
+      while true
         target = new Date(today.getFullYear(), today.getMonth(), i)
         view  = new DateView(target.getFullYear(), target.getMonth()+1, target.getDate())
         @$el.prepend view.render().el
         i = target.getDate() + 1
-
+        break if i == today.getDate()
+        
   DateView = Backbone.View.extend
     tagName: 'li'
     template: _.template($('#date-template').html())
@@ -105,6 +116,7 @@ $ ->
     # 引数はhashで受け取ろう
     initialize: (year, month, date) ->
       Expenses.bind "add-" + year + "/" + month + "/" + date, @addOne, this
+      Expenses.bind "refreshTotal-" + year + "/" + month + "/" + date, @culcTotal, this
       
       @year = year
       @month = month
@@ -120,9 +132,22 @@ $ ->
       this
 
     addOne: (expense) ->
-      @total += expense.get("price")
+      console.log expense
       view = new ExpenseView(model: expense)
       @$("#expense-list").append view.render().el
+      @total += expense.get("price")
+      @$el.children(".total").html("日計: " + @total + "円")
+
+    culcTotal: ->
+      # うーん。むっちゃ計算量が多い・・・
+      expenses = Expenses.filter (expense)->
+        expense.get("year") == @year &&
+        expense.get("month") == @month &&
+        expense.get("date") == @date
+      , this
+      @total = expenses.reduce (num, expense) ->
+        num + expense.get("price")
+      , 0
       @$el.children(".total").html("日計: " + @total + "円")
 
     addExpense: (e) ->

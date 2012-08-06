@@ -47,7 +47,7 @@ app.post "/expenses", (req, res) ->
   expense = new Expense(req.body)
   expense.save (error) ->
     if not error
-      res.json success: true
+      res.json expense
     else
       res.json success: false
 
@@ -60,7 +60,7 @@ app.put "/expenses/:id", (req, res) ->
     price: req.body.price
   Expense.update {_id: req.params.id}, data, (error, expense) ->
     if not error
-      res.json exepnse
+      res.json expense
     else
       res.json success: false
 

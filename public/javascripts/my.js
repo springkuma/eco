@@ -35,6 +35,17 @@
           this.dateList.setDate(key, expense);
           return this.trigger("add-" + key, expense);
         }, this);
+        this.on("change:price", function(expense, value) {
+          var key;
+          key = this.generate(expense);
+          return this.trigger("refreshTotal-" + key, expense, value);
+        }, this);
+        this.on("destroy", function(expense) {
+          var key;
+          console.log(expense);
+          key = this.generate(expense);
+          return this.trigger("refreshTotal-" + key, expense);
+        }, this);
         return this.on("reset", function(expenses) {
           return expenses.each(function(expense) {
             var key;
@@ -84,7 +95,6 @@
           remark: this.remark.val(),
           price: parseInt(this.price.val(), 10)
         });
-        console.log(this.model);
         return this.$el.removeClass("editing");
       },
       clear: function() {
@@ -99,11 +109,16 @@
         today = new Date();
         i = this.startDate;
         _results = [];
-        while (i <= today.getDate()) {
+        while (true) {
           target = new Date(today.getFullYear(), today.getMonth(), i);
           view = new DateView(target.getFullYear(), target.getMonth() + 1, target.getDate());
           this.$el.prepend(view.render().el);
-          _results.push(i = target.getDate() + 1);
+          i = target.getDate() + 1;
+          if (i === today.getDate()) {
+            break;
+          } else {
+            _results.push(void 0);
+          }
         }
         return _results;
       }
@@ -116,6 +131,7 @@
       },
       initialize: function(year, month, date) {
         Expenses.bind("add-" + year + "/" + month + "/" + date, this.addOne, this);
+        Expenses.bind("refreshTotal-" + year + "/" + month + "/" + date, this.culcTotal, this);
         this.year = year;
         this.month = month;
         this.date = date;
@@ -133,11 +149,22 @@
       },
       addOne: function(expense) {
         var view;
-        this.total += expense.get("price");
+        console.log(expense);
         view = new ExpenseView({
           model: expense
         });
         this.$("#expense-list").append(view.render().el);
+        this.total += expense.get("price");
+        return this.$el.children(".total").html("日計: " + this.total + "円");
+      },
+      culcTotal: function() {
+        var expenses;
+        expenses = Expenses.filter(function(expense) {
+          return expense.get("year") === this.year && expense.get("month") === this.month && expense.get("date") === this.date;
+        }, this);
+        this.total = expenses.reduce(function(num, expense) {
+          return num + expense.get("price");
+        }, 0);
         return this.$el.children(".total").html("日計: " + this.total + "円");
       },
       addExpense: function(e) {
