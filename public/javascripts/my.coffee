@@ -140,6 +140,7 @@ $ ->
 
     culcTotal: ->
       # うーん。むっちゃ計算量が多い・・・
+      # expenseに紐付いているdatelistからとるようにしよう
       expenses = Expenses.filter (expense)->
         expense.get("year") == @year &&
         expense.get("month") == @month &&
