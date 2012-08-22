@@ -77,6 +77,7 @@ $ ->
       this
 
     edit: ->
+      console.log 'edit'
       @$el.addClass("editing")
       @input.focus()
 

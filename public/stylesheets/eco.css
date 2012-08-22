@@ -6,6 +6,14 @@ body {
   margin: 0 auto;
 }
 
+input{
+  font-size: inherit;
+}
+
+ul li{
+  list-style: none;
+}
+
 #ecoapp{
   background: #fff;
 }
@@ -17,14 +25,20 @@ body {
   content: ".";
 }
 
+#main{
+  display: none;
+}
+
 #expense{
   float: left;
-  width: 80%;
+  width: 70%;
+  border: 1px solid;
 }
 
 #info-bar{
   float: left;
   width: 20%;
+  border: 1px solid;
 }
 
 .clearfix:after{
@@ -36,8 +50,39 @@ body {
   visibility: hidden;
 }
 
+#date-list label{
+}
 
+#date-list input{
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
 
+#date-list input.remark{
+  width: 15em;
+}
+#date-list input.price{
+  width: 15em;
+}
+
+div.remark{
+  display: inline-block;
+  width: 15em;
+}
+
+div.price{
+  display: inline-block;
+  width: 15em;
+}
+
+#expense-list li .edit{
+  display: none;
+}
+
+#expense-list li.editting .view{
+  display: none;
+}
 
 
 

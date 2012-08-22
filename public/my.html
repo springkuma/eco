@@ -29,9 +29,9 @@
 
   <!-- template -->
   <script type="text/template" id="date-template">
-    <div class="new-date"><%= this.month %>/<%= this.date %></div>
-    <input type="text" class="new-remark-field"/>
-    <input type="text" class="new-price-field"/>
+    <label class="new-date"><%= this.month %>/<%= this.date %></label>
+    <input type="text" class="new-remark-field remark"/>
+    <input type="text" class="new-price-field price"/>
     <ul id="expense-list"></ul>
     <div class="total"></div>
   </script>
@@ -43,8 +43,8 @@
       <a class="destroy"></a>
     </div>
     <div class="edit">
-      <input class="remark-field" type="text" value="<%= remark %>" />
-      <input class="price-field" type="text" value="<%= price %>" />
+      <input class="remark-field remark" type="text" value="<%= remark %>" />
+      <input class="price-field price" type="text" value="<%= price %>" />
     </div>
     <!--input class="edit" type="text" value="<%= remark %>" /-->
   </script>
