@@ -1,17 +1,19 @@
-A = function(){
-  this.aaa = "bbb";
-  this.bbb = {
-    ccc: "ddd",
-    ddd: "eee",
-    f1: function(){
-      console.log(this);
-      return true;
-    }
-  };
+var c = 2;
 
-  console.log(this);
-  this.bbb.f1.apply(this);
-};
+var o = (function(){
+  var a = 'a';
+  var b = function(){
+    return {
+      d: 1,
+      func: function(){
+        console.log(a);
+        console.log(this);
+        return this.d;
+      }
+    };
+  }();
 
-a = new A();
-// console.log(a.bbb.ccc);
+  console.log(b.func());
+})();
+
+console.log(o.b);

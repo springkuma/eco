@@ -32,12 +32,12 @@ ul li{
 #expense{
   float: left;
   width: 70%;
-  border: 1px solid;
 }
 
 #info-bar{
   float: left;
   width: 20%;
+  height: 500px;
   border: 1px solid;
 }
 
@@ -51,6 +51,7 @@ ul li{
 }
 
 #date-list label{
+  display: inline;
 }
 
 #date-list input{
@@ -76,17 +77,52 @@ div.price{
   width: 15em;
 }
 
+#expense-list{
+  display: inline-block;
+}
+
+#expense-list li{
+  position: relative;
+}
+
+#expense-list li.editing .edit{
+  display: block;
+}
+
 #expense-list li .edit{
   display: none;
 }
 
-#expense-list li.editting .view{
+#expense-list li.editing .view{
   display: none;
+}
+
+#expense-list .destroy {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	cursor: pointer;
+	width: 20px;
+	height: 20px;
+	background: url(destroy.png) no-repeat;
+}
+
+#expense-list li:hover .destroy {
+  display: block;
+}
+
+#expense-list .destroy:hover {
+  background-position: 0 -20px;
+}
+
+div.total{
+  display: inline-block;
 }
 
 
 
-/* 以下、サンプル用 */
+
+/* 以下、テスト用 */
 #position_sample{
   position: relative;
 }

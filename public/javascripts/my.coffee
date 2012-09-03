@@ -36,7 +36,6 @@ $ ->
       , this
 
       @on "destroy", (expense) ->
-        console.log expense
         key = @generate(expense)
         @trigger("refreshTotal-" + key, expense)
       , this
@@ -51,6 +50,12 @@ $ ->
         
     generate: (expense) ->
       expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date")
+
+    total: ->
+      this.reduce (num, expense) ->
+        console.log num
+        num + expense.get("price")
+      , 0
 
   Expenses = new ExpenseList()
 
@@ -71,13 +76,12 @@ $ ->
 
     render: ->
       @$el.html @template(@model.toJSON())
-      @input = @$('.edit')
+      @input = @$('input.remark-field')
       @remark = @$('.remark-field')
       @price = @$('.price-field')
       this
 
     edit: ->
-      console.log 'edit'
       @$el.addClass("editing")
       @input.focus()
 
@@ -99,13 +103,17 @@ $ ->
 
     initialize: ->
       today = new Date()
-      i = @startDate
+      
+      if today.getDate() < @startDate
+        target = new Date(today.getFullYear(), today.getMonth() - 1, @startDate)
+      else
+        target = new Date(today.getFullYear(), today.getMonth(), @startDate)
+      
       while true
-        target = new Date(today.getFullYear(), today.getMonth(), i)
         view  = new DateView(target.getFullYear(), target.getMonth()+1, target.getDate())
         @$el.prepend view.render().el
-        i = target.getDate() + 1
-        break if i == today.getDate()
+        break if target >= today
+        target = new Date(target.getFullYear(), target.getMonth(), target.getDate() + 1)
         
   DateView = Backbone.View.extend
     tagName: 'li'
@@ -133,7 +141,6 @@ $ ->
       this
 
     addOne: (expense) ->
-      console.log expense
       view = new ExpenseView(model: expense)
       @$("#expense-list").append view.render().el
       @total += expense.get("price")
@@ -163,6 +170,16 @@ $ ->
       @remark.val ""
       @price.val ""
 
+  InfoView = Backbone.View.extend
+    el: $("#info-bar")
+    template: _.template($('#info-template').html())
+
+    initialize: ->
+      Expenses.bind 'reset', @render, this
+
+    render: ->
+      @$el.html @template(total: Expenses.total())
+      
   AppView = Backbone.View.extend
     el: $("#expenseapp")
 
@@ -173,6 +190,7 @@ $ ->
       @main = $('#main')
 
       list = new DateListView()
+      info = new InfoView()
 
       Expenses.fetch()
  
@@ -180,5 +198,6 @@ $ ->
       @main.show()
       @footer.show()
       this
+
 
   App = new AppView()

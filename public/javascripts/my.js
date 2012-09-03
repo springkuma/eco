@@ -2,7 +2,7 @@
 (function() {
 
   $(function() {
-    var App, AppView, DateList, DateListView, DateView, Expense, ExpenseList, ExpenseView, Expenses;
+    var App, AppView, DateList, DateListView, DateView, Expense, ExpenseList, ExpenseView, Expenses, InfoView;
     Expense = Backbone.Model.extend({
       idAttribute: "_id",
       defaults: function() {
@@ -42,7 +42,6 @@
         }, this);
         this.on("destroy", function(expense) {
           var key;
-          console.log(expense);
           key = this.generate(expense);
           return this.trigger("refreshTotal-" + key, expense);
         }, this);
@@ -57,6 +56,12 @@
       },
       generate: function(expense) {
         return expense.get("year") + "/" + expense.get("month") + "/" + expense.get("date");
+      },
+      total: function() {
+        return this.reduce(function(num, expense) {
+          console.log(num);
+          return num + expense.get("price");
+        }, 0);
       }
     });
     Expenses = new ExpenseList();
@@ -76,7 +81,7 @@
       },
       render: function() {
         this.$el.html(this.template(this.model.toJSON()));
-        this.input = this.$('.edit');
+        this.input = this.$('input.remark-field');
         this.remark = this.$('.remark-field');
         this.price = this.$('.price-field');
         return this;
@@ -105,20 +110,21 @@
       el: $('#date-list'),
       startDate: 25,
       initialize: function() {
-        var i, target, today, view, _results;
+        var target, today, view, _results;
         today = new Date();
-        i = this.startDate;
+        if (today.getDate() < this.startDate) {
+          target = new Date(today.getFullYear(), today.getMonth() - 1, this.startDate);
+        } else {
+          target = new Date(today.getFullYear(), today.getMonth(), this.startDate);
+        }
         _results = [];
         while (true) {
-          target = new Date(today.getFullYear(), today.getMonth(), i);
           view = new DateView(target.getFullYear(), target.getMonth() + 1, target.getDate());
           this.$el.prepend(view.render().el);
-          i = target.getDate() + 1;
-          if (i === today.getDate()) {
+          if (target >= today) {
             break;
-          } else {
-            _results.push(void 0);
           }
+          _results.push(target = new Date(target.getFullYear(), target.getMonth(), target.getDate() + 1));
         }
         return _results;
       }
@@ -149,7 +155,6 @@
       },
       addOne: function(expense) {
         var view;
-        console.log(expense);
         view = new ExpenseView({
           model: expense
         });
@@ -182,14 +187,28 @@
         return this.price.val("");
       }
     });
+    InfoView = Backbone.View.extend({
+      el: $("#info-bar"),
+      template: _.template($('#info-template').html()),
+      initialize: function() {
+        return Expenses.bind('reset', this.render, this);
+      },
+      render: function() {
+        console.log('infobar render');
+        return this.$el.html(this.template({
+          total: Expenses.total()
+        }));
+      }
+    });
     AppView = Backbone.View.extend({
       el: $("#expenseapp"),
       initialize: function() {
-        var list;
+        var info, list;
         Expenses.bind("all", this.render, this);
         this.footer = $('footer');
         this.main = $('#main');
         list = new DateListView();
+        info = new InfoView();
         return Expenses.fetch();
       },
       render: function() {

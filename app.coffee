@@ -31,17 +31,29 @@ ExpenseSchema = new Schema
   price: Number
 
 Expense = mongoose.model('Expense', ExpenseSchema)
+startDate = 25
 
 app.get "/", routes.index
 
 app.get "/expenses", (req, res) ->
-  query = Expense.find({})
-  query.sort("date", 1)
-  query.exec (error, expenses) ->
-    if not error
-      res.json expenses
-    else
-      res.json success: false
+  q1 = Expense.find()
+  q1.where('month').equals(8)
+  q1.where('date').gte(25)
+
+  q2 = Expense.find()
+  q2.where('month').equals(9)
+  q2.where('date').lt(25)
+
+  query = q1.or(q2)
+
+  q1.exec (err1, ex1) ->
+    q2.exec (err2, ex2) ->
+      if not (err1 & err2)
+        ex1.push.apply(ex1, ex2)
+        console.log ex1
+        res.json ex1
+      else
+        res.json success: false
 
 app.post "/expenses", (req, res) ->
   expense = new Expense(req.body)
